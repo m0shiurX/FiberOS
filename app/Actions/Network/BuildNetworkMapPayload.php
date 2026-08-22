@@ -126,6 +126,16 @@ class BuildNetworkMapPayload
                     'model' => $olt->model,
                     'pop_code' => $olt->pop->code,
                 ])->all(),
+                'closure' => $closures->keyBy('id')->map(function ($closure) use ($splitters) {
+                    $servedSplitters = $splitters->where('closure_id', $closure->id);
+
+                    return [
+                        'code' => $closure->code,
+                        'fiber_code' => $closure->fiberCable->code,
+                        'connected_splitters' => $servedSplitters->count(),
+                        'connected_customers' => $servedSplitters->sum('customers_count'),
+                    ];
+                })->all(),
             ],
         ];
     }

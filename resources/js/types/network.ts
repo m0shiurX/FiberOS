@@ -1,12 +1,17 @@
-export type AssetType = 'pop' | 'olt' | 'fiber' | 'closure' | 'splitter' | 'customer';
+export type AssetType =
+    'pop' | 'olt' | 'fiber' | 'closure' | 'splitter' | 'customer';
 
 export interface GeoJsonFeature<Properties = Record<string, unknown>> {
     type: 'Feature';
-    geometry: { type: 'Point'; coordinates: [number, number] } | { type: 'LineString'; coordinates: [number, number][] };
+    geometry:
+        | { type: 'Point'; coordinates: [number, number] }
+        | { type: 'LineString'; coordinates: [number, number][] };
     properties: Properties & { id: number; code: string };
 }
 
-export interface GeoJsonFeatureCollection<Properties = Record<string, unknown>> {
+export interface GeoJsonFeatureCollection<
+    Properties = Record<string, unknown>,
+> {
     type: 'FeatureCollection';
     features: GeoJsonFeature<Properties>[];
 }
@@ -24,10 +29,24 @@ export interface ConnectorCollection {
 
 export interface NetworkLayers {
     pops: GeoJsonFeatureCollection<{ name: string }>;
-    olts: GeoJsonFeatureCollection<{ name: string; vendor: string; model: string; pop_code: string }>;
-    fibers: GeoJsonFeatureCollection<{ type: string; used_cores: number; core_capacity: number; olt_code: string }>;
+    olts: GeoJsonFeatureCollection<{
+        name: string;
+        vendor: string;
+        model: string;
+        pop_code: string;
+    }>;
+    fibers: GeoJsonFeatureCollection<{
+        type: string;
+        used_cores: number;
+        core_capacity: number;
+        olt_code: string;
+    }>;
     closures: GeoJsonFeatureCollection<{ fiber_code: string }>;
-    splitters: GeoJsonFeatureCollection<{ type: string; occupied_ports: number; port_count: number }>;
+    splitters: GeoJsonFeatureCollection<{
+        type: string;
+        occupied_ports: number;
+        port_count: number;
+    }>;
     customers: GeoJsonFeatureCollection<{ name: string; status: string }>;
     connectors: ConnectorCollection;
 }
@@ -72,11 +91,19 @@ export interface OltDetail {
     pop_code: string;
 }
 
+export interface ClosureDetail {
+    code: string;
+    fiber_code: string;
+    connected_splitters: number;
+    connected_customers: number;
+}
+
 export interface NetworkDetails {
     customer: Record<number, CustomerDetail>;
     splitter: Record<number, SplitterDetail>;
     fiber: Record<number, FiberDetail>;
     olt: Record<number, OltDetail>;
+    closure: Record<number, ClosureDetail>;
 }
 
 export interface TraceStep {
@@ -106,4 +133,12 @@ export interface FiberImpact {
 export interface SelectedAsset {
     type: AssetType;
     id: number;
+}
+
+export interface NetworkFault {
+    fiberId: number;
+    closureIds: number[];
+    splitterIds: number[];
+    customerIds: number[];
+    breakPoint: [number, number];
 }

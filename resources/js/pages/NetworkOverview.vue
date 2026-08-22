@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import NetworkMapController from '@/actions/App/Http/Controllers/NetworkMapController';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 defineProps<{
     metrics: {
@@ -23,49 +23,80 @@ defineProps<{
         <header class="flex items-center justify-between">
             <div>
                 <p class="text-sm text-muted-foreground">FiberOS</p>
-                <h1 class="text-2xl font-semibold tracking-tight">Network Overview</h1>
+                <h1 class="text-2xl font-semibold tracking-tight">
+                    Network Overview
+                </h1>
             </div>
             <Button as-child>
-                <Link :href="NetworkMapController.index.url()">Open Network Map</Link>
+                <Link :href="NetworkMapController.index.url()"
+                    >Open Network Map</Link
+                >
             </Button>
         </header>
 
         <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-sm font-normal text-muted-foreground">Customers</CardTitle>
+                    <CardTitle class="text-sm font-normal text-muted-foreground"
+                        >Customers</CardTitle
+                    >
                 </CardHeader>
-                <CardContent class="text-2xl font-semibold">{{ metrics.total_customers }}</CardContent>
+                <CardContent class="text-2xl font-semibold">{{
+                    metrics.total_customers
+                }}</CardContent>
             </Card>
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-sm font-normal text-muted-foreground">Active</CardTitle>
+                    <CardTitle class="text-sm font-normal text-muted-foreground"
+                        >Active</CardTitle
+                    >
                 </CardHeader>
-                <CardContent class="text-2xl font-semibold text-[#16c784]">{{ metrics.active_customers }}</CardContent>
+                <CardContent class="text-2xl font-semibold text-[#16c784]">{{
+                    metrics.active_customers
+                }}</CardContent>
             </Card>
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-sm font-normal text-muted-foreground">Offline</CardTitle>
+                    <CardTitle class="text-sm font-normal text-muted-foreground"
+                        >Offline</CardTitle
+                    >
                 </CardHeader>
-                <CardContent class="text-2xl font-semibold text-destructive">{{ metrics.offline_customers }}</CardContent>
+                <CardContent class="text-2xl font-semibold text-destructive">{{
+                    metrics.offline_customers
+                }}</CardContent>
             </Card>
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-sm font-normal text-muted-foreground">Splitters</CardTitle>
+                    <CardTitle class="text-sm font-normal text-muted-foreground"
+                        >Splitters</CardTitle
+                    >
                 </CardHeader>
-                <CardContent class="text-2xl font-semibold">{{ metrics.total_splitters }}</CardContent>
+                <CardContent class="text-2xl font-semibold">{{
+                    metrics.total_splitters
+                }}</CardContent>
             </Card>
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-sm font-normal text-muted-foreground">Port utilization</CardTitle>
+                    <CardTitle class="text-sm font-normal text-muted-foreground"
+                        >Port utilization</CardTitle
+                    >
                 </CardHeader>
-                <CardContent class="text-2xl font-semibold">{{ metrics.port_utilization }}%</CardContent>
+                <CardContent class="text-2xl font-semibold"
+                    >{{ metrics.port_utilization }}%</CardContent
+                >
             </Card>
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle class="text-sm font-normal text-muted-foreground">Fiber deployed</CardTitle>
+                    <CardTitle class="text-sm font-normal text-muted-foreground"
+                        >Fiber deployed</CardTitle
+                    >
                 </CardHeader>
-                <CardContent class="text-2xl font-semibold">{{ (metrics.total_fiber_length_meters / 1000).toFixed(2) }} km</CardContent>
+                <CardContent class="text-2xl font-semibold"
+                    >{{
+                        (metrics.total_fiber_length_meters / 1000).toFixed(2)
+                    }}
+                    km</CardContent
+                >
             </Card>
         </div>
     </div>

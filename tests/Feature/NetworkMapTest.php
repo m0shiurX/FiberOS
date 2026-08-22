@@ -2,6 +2,7 @@
 
 use App\Models\Customer;
 use App\Models\FiberCable;
+use App\Models\SpliceClosure;
 use App\Models\Splitter;
 use Database\Seeders\NetworkTopologySeeder;
 
@@ -20,6 +21,7 @@ it('renders the network overview with topology metrics', function () {
 
 it('renders the network map with all layers and detail records', function () {
     $splitter = Splitter::where('code', 'SP-001')->firstOrFail();
+    $closure = SpliceClosure::where('code', 'CL-001')->firstOrFail();
 
     $this->get(route('network.map'))
         ->assertOk()
@@ -31,6 +33,8 @@ it('renders the network map with all layers and detail records', function () {
             ->has('layers.connectors.features', 14)
             ->where("details.splitter.{$splitter->id}.occupied_ports", 3)
             ->where("details.splitter.{$splitter->id}.available_ports", 5)
+            ->where("details.closure.{$closure->id}.connected_splitters", 3)
+            ->where("details.closure.{$closure->id}.connected_customers", 10)
         );
 });
 
