@@ -10,7 +10,8 @@
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "lint:check": "eslint .",
-        "types:check": "vue-tsc --noEmit"
+        "types:check": "vue-tsc --noEmit",
+        "postinstall": "mkdir -p public/vendor/maplibre-gl && cp node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs node_modules/maplibre-gl/dist/maplibre-gl-shared.mjs public/vendor/maplibre-gl/"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
@@ -42,6 +43,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "laravel-vite-plugin": "^3.0.0",
+        "maplibre-gl": "^6.5.0",
         "reka-ui": "^2.9.8",
         "tailwind-merge": "^3.2.0",
         "tailwindcss": "^4.1.1",
