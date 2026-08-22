@@ -1,4 +1,4 @@
-# NewCo ISP Infrastructure Platform — Company & Product Plan
+# FiberOS ISP Infrastructure Platform — Company & Product Plan
 
 ## 1. Document Purpose
 
@@ -12,7 +12,7 @@ The company is designed as an independent product business, not a custom softwar
 
 ### Working Company Name
 
-**NewCo**  
+**FiberOS**  
 Temporary internal name until branding is finalized.
 
 ### Mission
@@ -227,7 +227,7 @@ The company should maintain an independent market identity.
 The company should build one modular platform rather than disconnected applications.
 
 ```text
-                    NEWCO PLATFORM
+                    FiberOS PLATFORM
 
                ┌──────────────────┐
                │    FiberOS GIS   │
@@ -1118,18 +1118,18 @@ Hiring should follow product milestones, not happen all at once.
 
 ## 20. First-Year Budget Framework
 
-| Category | Annual Estimate |
-|---|---:|
-| Founder salary and tools | BDT 12 lakh |
-| Engineering salaries | BDT 11–14 lakh |
-| Design and consultants | BDT 3–4 lakh |
-| Office, internet, utilities | BDT 3–4 lakh |
-| Cloud and development infrastructure | BDT 2–3 lakh |
-| Devices and testing equipment | BDT 2 lakh |
-| Legal, accounting, company setup | BDT 1.5 lakh |
-| Travel and customer research | BDT 1 lakh |
-| Miscellaneous | BDT 1.5 lakh |
-| Operational reserve | BDT 2–3 lakh |
+| Category                             | Annual Estimate |
+| ------------------------------------ | --------------: |
+| Founder salary and tools             |     BDT 12 lakh |
+| Engineering salaries                 |  BDT 11–14 lakh |
+| Design and consultants               |    BDT 3–4 lakh |
+| Office, internet, utilities          |    BDT 3–4 lakh |
+| Cloud and development infrastructure |    BDT 2–3 lakh |
+| Devices and testing equipment        |      BDT 2 lakh |
+| Legal, accounting, company setup     |    BDT 1.5 lakh |
+| Travel and customer research         |      BDT 1 lakh |
+| Miscellaneous                        |    BDT 1.5 lakh |
+| Operational reserve                  |    BDT 2–3 lakh |
 
 Estimated total:
 
