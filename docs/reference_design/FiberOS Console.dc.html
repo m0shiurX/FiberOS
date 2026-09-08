@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/colors.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/typography.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/radius.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/motion.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/base.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/styles.css">
+<script src="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/_ds_bundle.js"></script>
+<style>
+html, body { margin: 0; padding: 0; background: var(--bg-subtle); }
+a { color: var(--text-accent); text-decoration: none; }
+a:hover { color: var(--blue-600); }
+@keyframes fos-pulse { 0% { opacity: 1; } 50% { opacity: .35; } 100% { opacity: 1; } }
+@keyframes fos-spin { to { transform: rotate(360deg); } }
+@keyframes fos-ring { 0% { r: 5; opacity: .55; } 100% { r: 15; opacity: 0; } }
+</style>
+</helmet>
+
+<div style="display:flex;height:100vh;overflow:hidden;background:var(--bg-subtle);font-family:var(--font-body);font-size:var(--type-body-size);color:var(--text-primary);-webkit-font-smoothing:antialiased">
+
+  <aside style="{{ sidebarStyle }}">
+    <div style="{{ brandRowStyle }}">
+      <span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex:0 0 auto;border-radius:var(--radius-sm);background:var(--action-primary);font-family:var(--font-display);font-size:13px;font-weight:700;color:#fff">F</span>
+      <span style="{{ brandStyle }}">
+        <span style="font-family:var(--font-display);font-size:16px;font-weight:600;letter-spacing:-0.2px;color:var(--text-on-dark)">FiberOS</span>
+        <span style="font-size:11px;letter-spacing:.2px;color:var(--text-on-dark-muted)">GIS &amp; Inventory</span>
+      </span>
+    </div>
+
+    <nav style="flex:1;min-height:0;overflow-y:auto;padding:10px 8px 14px;display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;gap:2px;padding-bottom:8px">
+          <sc-if value="{{ g.showLabel }}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{ g.toggle }}" style="display:flex;align-items:center;gap:6px;width:100%;height:26px;padding:0 10px;margin-top:6px;border:none;background:transparent;font-family:var(--font-body);font-size:11px;font-weight:500;letter-spacing:.4px;color:var(--n-500);cursor:pointer">
+              <span style="flex:1;text-align:left">{{ g.label }}</span>
+              <span style="{{ g.chevronStyle }}">
+                <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="chevron-down" hint-size="12px,12px" style="width:12px;height:12px"></x-import>
+              </span>
+            </button>
+          </sc-if>
+          <sc-if value="{{ g.open }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <button type="button" onClick="{{ it.select }}" title="{{ it.title }}" style="{{ it.style }}">
+                <span style="position:relative;display:inline-flex;flex:0 0 auto">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="{{ it.icon }}" hint-size="16px,16px"></x-import>
+                  <sc-if value="{{ it.showDot }}">
+                    <span style="{{ it.dotStyle }}"></span>
+                  </sc-if>
+                </span>
+                <sc-if value="{{ it.showLabel }}" hint-placeholder-val="{{ true }}">
+                  <span style="flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.label }}</span>
+                </sc-if>
+                <sc-if value="{{ it.showBadge }}">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Badge" tone="{{ it.badgeTone }}" hint-size="22px,20px">{{ it.badge }}</x-import>
+                </sc-if>
+              </button>
+            </sc-for>
+          </sc-if>
+        </div>
+      </sc-for>
+    </nav>
+
+    <div style="{{ sidebarFooterStyle }}">
+      <div style="display:flex;align-items:center;gap:8px;padding:10px;border-radius:var(--radius-md);background:rgba(255,255,255,.04)">
+        <span style="width:7px;height:7px;flex:0 0 auto;border-radius:var(--radius-full);background:var(--cyan-500);animation:fos-pulse 2.4s var(--ease-standard) infinite"></span>
+        <span style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-size:13px;font-weight:500;color:var(--text-on-dark)">Production</span>
+          <span style="font-size:11px;color:var(--text-on-dark-muted)">Bogura Region · 12 POPs</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <header style="display:flex;align-items:center;gap:14px;height:56px;flex:0 0 auto;padding:0 20px;background:rgba(245,247,250,.80);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border-hairline)">
+      <button type="button" onClick="{{ toggleCollapse }}" aria-label="{{ collapseLabel }}" title="{{ collapseLabel }}" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto;border:1px solid var(--border-hairline);border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);cursor:pointer;transition:background var(--dur-fast) var(--ease-standard),color var(--dur-fast) var(--ease-standard)" style-hover="background:var(--action-ghost-hover);color:var(--text-primary)">
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" from="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/_ds_bundle.js" name="{{ collapseIcon }}" hint-size="17px,17px" style="width:17px;height:17px"></x-import>
+      </button>
+      <div style="flex:1;min-width:180px;max-width:460px">
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.SearchField" placeholder="Search devices, customers, POPs, fibers..." hint-size="100%,40px"></x-import>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:0 0 auto;margin-left:auto">
+        <span style="position:relative;display:inline-flex;flex:0 0 auto">
+          <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.IconButton" name="bell" label="2 critical alarms" variant="outline" hint-size="34px,34px"></x-import>
+          <span style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:var(--radius-full);background:var(--status-critical);border:1.5px solid var(--bg-subtle)"></span>
+        </span>
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" size="sm" hint-size="120px,32px">Quick add</x-import>
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.AccountChip" name="ADM1013-10" hint-size="150px,40px" style="white-space:nowrap;flex:0 0 auto"></x-import>
+      </div>
+    </header>
+
+    <main data-screen-label="Dashboard" style="flex:1;min-height:0;overflow-y:auto;padding:24px 20px 48px">
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:var(--content-max);margin:0 auto">
+
+        <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+          <div style="flex:1;min-width:280px">
+            <h1 style="margin:0;font-family:var(--font-display);font-size:var(--type-heading-lg-size);font-weight:600;letter-spacing:-0.3px;color:var(--text-primary)">Network Command Center</h1>
+            <p style="margin:4px 0 0;font-size:var(--type-body-sm-size);color:var(--text-muted)">Live overview of deployment, capacity and network health. <span style="color:var(--text-secondary)">{{ updatedLabel }}</span></p>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.SegmentedControl" options="{{ rangeOptions }}" value="{{ range }}" onChange="{{ setRange }}" hint-size="220px,38px"></x-import>
+            <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Select" options="{{ popOptions }}" size="sm" hint-size="180px,32px"></x-import>
+            <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.IconButton" name="refresh-cw" label="Refresh" variant="outline" onClick="{{ onRefresh }}" style="{{ refreshStyle }}" hint-size="34px,34px"></x-import>
+            <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" size="sm" hint-size="180px,32px">Open Network Map</x-import>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px">
+
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="cable" hint-size="15px,15px" style="width:15px;height:15px;background-color:var(--text-muted)"></x-import>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">Fiber Deployed</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:5px">
+              <span style="font-family:var(--font-display);font-size:var(--type-metric-xl-size);font-weight:600;letter-spacing:-0.6px;font-variant-numeric:tabular-nums;line-height:1">518.4</span>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">km</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.StatusPill" tone="ok" dot="{{ false }}" hint-size="86px,24px">+12.8 km</x-import>
+              <span style="font-size:var(--type-caption-size);color:var(--text-muted)">47 active routes</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="users" hint-size="15px,15px" style="width:15px;height:15px;background-color:var(--text-muted)"></x-import>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">Active Subscribers</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:5px">
+              <span style="font-family:var(--font-display);font-size:var(--type-metric-xl-size);font-weight:600;letter-spacing:-0.6px;font-variant-numeric:tabular-nums;line-height:1">18,420</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.StatusPill" tone="ok" dot="{{ false }}" hint-size="70px,24px">+312</x-import>
+              <span style="font-size:var(--type-caption-size);color:var(--text-muted)">this month</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="layers" hint-size="15px,15px" style="width:15px;height:15px;background-color:var(--text-muted)"></x-import>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">Network Nodes</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:5px">
+              <span style="font-family:var(--font-display);font-size:var(--type-metric-xl-size);font-weight:600;letter-spacing:-0.6px;font-variant-numeric:tabular-nums;line-height:1">2,481</span>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">assets</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:var(--type-caption-size);color:var(--text-secondary)">
+              <span style="padding:2px 7px;border-radius:var(--radius-xs);background:var(--n-50);font-variant-numeric:tabular-nums">12 POP</span>
+              <span style="padding:2px 7px;border-radius:var(--radius-xs);background:var(--n-50);font-variant-numeric:tabular-nums">38 OLT</span>
+              <span style="padding:2px 7px;border-radius:var(--radius-xs);background:var(--n-50);font-variant-numeric:tabular-nums">214 CL</span>
+              <span style="padding:2px 7px;border-radius:var(--radius-xs);background:var(--n-50);font-variant-numeric:tabular-nums">397 FDB</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="activity" hint-size="15px,15px" style="width:15px;height:15px;background-color:var(--text-muted)"></x-import>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">Network Health</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:5px">
+              <span style="font-family:var(--font-display);font-size:var(--type-metric-xl-size);font-weight:600;letter-spacing:-0.6px;font-variant-numeric:tabular-nums;line-height:1;color:var(--green-700)">98.7</span>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.StatusPill" tone="ok" hint-size="86px,24px">Healthy</x-import>
+              <span style="font-size:var(--type-caption-size);color:var(--text-muted)">2,481 monitored</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="git-fork" hint-size="15px,15px" style="width:15px;height:15px;background-color:var(--text-muted)"></x-import>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">PON Capacity</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:5px">
+              <span style="font-family:var(--font-display);font-size:var(--type-metric-xl-size);font-weight:600;letter-spacing:-0.6px;font-variant-numeric:tabular-nums;line-height:1;color:var(--amber-700)">71</span>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">% avg</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.StackedBar" segments="{{ ponSegments }}" height="6" hint-size="100%,6px"></x-import>
+              <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">214 normal · 48 near · 21 critical</span>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="wifi" hint-size="15px,15px" style="width:15px;height:15px;background-color:var(--text-muted)"></x-import>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">ONUs Online</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:5px">
+              <span style="font-family:var(--font-display);font-size:var(--type-metric-xl-size);font-weight:600;letter-spacing:-0.6px;font-variant-numeric:tabular-nums;line-height:1">17,984</span>
+              <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">/ 18,420</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.StatusPill" tone="active" hint-size="70px,24px">97.6%</x-import>
+              <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">17 LOS · 24 weak</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:16px">
+
+          <section style="flex:2 1 440px;min-width:0;display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <header style="display:flex;align-items:flex-start;gap:12px;padding:16px 20px 12px">
+              <div style="flex:1;min-width:0">
+                <h3 style="margin:0;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">Network Layer Health</h3>
+                <p style="margin:3px 0 0;font-size:var(--type-body-sm-size);color:var(--text-muted)">Inventory correlated with live telemetry, from POP down to subscriber</p>
+              </div>
+              <span style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:var(--radius-pill);background:var(--cyan-50);font-size:var(--type-caption-size);font-weight:500;color:var(--cyan-700)">
+                <span style="width:6px;height:6px;border-radius:var(--radius-full);background:var(--cyan-500);animation:fos-pulse 2.4s var(--ease-standard) infinite"></span>Live
+              </span>
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.IconButton" name="ellipsis" label="Layer options" hint-size="34px,34px"></x-import>
+            </header>
+            <div style="display:flex;flex-direction:column;padding:0 20px 20px">
+              <div style="display:grid;grid-template-columns:20px minmax(0,1fr) 120px 96px 16px;gap:12px;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--border-hairline);font-size:var(--type-body-sm-size);color:var(--text-muted)">
+                <span></span>
+                <span>Layer</span>
+                <span>Utilization</span>
+                <span style="text-align:right">Attention</span>
+                <span></span>
+              </div>
+              <sc-for list="{{ layers }}" as="l" hint-placeholder-count="7">
+                <button type="button" onClick="{{ l.open }}" style="{{ l.rowStyle }}">
+                  <span style="position:relative;display:flex;align-items:center;justify-content:center;height:100%">
+                    <span style="{{ l.chainStyle }}"></span>
+                    <span style="{{ l.nodeStyle }}"></span>
+                  </span>
+                  <span style="display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left">
+                    <span style="display:flex;align-items:baseline;gap:8px">
+                      <span style="font-size:var(--type-body-size);font-weight:500;color:var(--text-primary)">{{ l.label }}</span>
+                      <span style="font-family:var(--font-display);font-size:var(--type-metric-sm-size);font-weight:500;letter-spacing:-0.2px;font-variant-numeric:tabular-nums;color:var(--text-primary)">{{ l.count }}</span>
+                    </span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ l.meta }}</span>
+                  </span>
+                  <span style="display:flex;align-items:center;gap:8px">
+                    <span style="flex:1;height:6px;border-radius:var(--radius-pill);background:var(--viz-track);overflow:hidden">
+                      <span style="{{ l.barStyle }}"></span>
+                    </span>
+                    <span style="min-width:32px;text-align:right;font-size:var(--type-caption-size);font-variant-numeric:tabular-nums;color:var(--text-secondary)">{{ l.usageLabel }}</span>
+                  </span>
+                  <span style="display:flex;align-items:center;justify-content:flex-end;gap:5px">
+                    <sc-if value="{{ l.hasCrit }}">
+                      <span style="display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:var(--radius-pill);background:var(--status-critical-bg);color:var(--status-critical-text);font-size:var(--type-micro-size);font-weight:600;font-variant-numeric:tabular-nums">{{ l.crit }}</span>
+                    </sc-if>
+                    <sc-if value="{{ l.hasWarn }}">
+                      <span style="display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:var(--radius-pill);background:var(--status-warn-bg);color:var(--status-warn-text);font-size:var(--type-micro-size);font-weight:600;font-variant-numeric:tabular-nums">{{ l.warn }}</span>
+                    </sc-if>
+                    <sc-if value="{{ l.clear }}">
+                      <span style="font-size:var(--type-caption-size);color:var(--text-disabled)">Clear</span>
+                    </sc-if>
+                  </span>
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="chevron-right" hint-size="16px,16px" style="background-color:var(--text-disabled)"></x-import>
+                </button>
+              </sc-for>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:14px">
+                <span style="flex:1;min-width:200px;font-size:var(--type-caption-size);color:var(--text-muted);text-wrap:pretty">Inventory records what should exist; telemetry reports what exists now. Amber and red rows carry drift between the two.</span>
+                <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="secondary" size="sm" hint-size="150px,32px">Open Network Map</x-import>
+              </div>
+            </div>
+          </section>
+
+          <section style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <header style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px">
+              <h3 style="flex:1;margin:0;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">Attention Required</h3>
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Badge" tone="critical" hint-size="22px,20px">4</x-import>
+            </header>
+            <div style="display:flex;flex-direction:column;padding:0 20px 20px">
+              <sc-for list="{{ attention }}" as="a" hint-placeholder-count="4">
+                <button type="button" onClick="{{ a.open }}" style="{{ a.style }}">
+                  <span style="{{ a.dotStyle }}"></span>
+                  <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;text-align:left">
+                    <span style="font-size:var(--type-body-size);font-weight:500;color:var(--text-primary)">{{ a.title }}</span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted)">{{ a.meta }}</span>
+                  </span>
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="chevron-right" hint-size="16px,16px" style="background-color:var(--text-disabled)"></x-import>
+                </button>
+              </sc-for>
+              <div style="margin-top:14px">
+                <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="secondary" size="sm" block="{{ true }}" hint-size="100%,32px">Acknowledge all</x-import>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+
+          <section style="display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <header style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px">
+              <div style="flex:1;min-width:0">
+                <h3 style="margin:0;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">Network Health</h3>
+                <p style="margin:3px 0 0;font-size:var(--type-body-sm-size);color:var(--text-muted)">Monitored devices by state</p>
+              </div>
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.IconButton" name="ellipsis" label="Health options" hint-size="34px,34px"></x-import>
+            </header>
+            <div style="display:flex;flex-direction:column;gap:14px;padding:0 20px 20px">
+              <div style="display:flex;align-items:center;justify-content:center">
+                <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.DonutGauge" segments="{{ healthSegments }}" total="98.7%" caption="Health score" size="164" hint-size="164px,164px"></x-import>
+              </div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ healthRows }}" as="h" hint-placeholder-count="4">
+                  <button type="button" onClick="{{ h.open }}" style="{{ h.style }}">
+                    <span style="{{ h.dotStyle }}"></span>
+                    <span style="flex:1;text-align:left;font-size:var(--type-body-size);color:var(--text-primary)">{{ h.label }}</span>
+                    <span style="font-size:var(--type-body-size);font-weight:500;font-variant-numeric:tabular-nums">{{ h.value }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="padding-top:4px;border-top:1px solid var(--border-hairline)">
+                <span style="display:block;padding:8px 0 6px;font-size:var(--type-caption-size);color:var(--text-muted)">Health trend · last 24 h</span>
+                <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.SparkArea" data="{{ healthTrend }}" height="56" color="var(--viz-3)" hint-size="100%,56px"></x-import>
+              </div>
+            </div>
+          </section>
+
+          <section style="display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <header style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px">
+              <div style="flex:1;min-width:0">
+                <h3 style="margin:0;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">ONU Optical Health</h3>
+                <p style="margin:3px 0 0;font-size:var(--type-body-sm-size);color:var(--text-muted)">Rx power distribution, 18,420 ONUs</p>
+              </div>
+            </header>
+            <div style="display:flex;flex-direction:column;gap:16px;padding:0 20px 20px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;gap:3px;height:26px">
+                  <span style="flex:8412;background:var(--green-500);border-radius:var(--radius-xs)"></span>
+                  <span style="flex:7922;background:var(--green-400);border-radius:var(--radius-xs)"></span>
+                  <span style="flex:1204;background:var(--amber-500);border-radius:var(--radius-xs)"></span>
+                  <span style="flex:442;background:var(--red-500);border-radius:var(--radius-xs)"></span>
+                  <span style="flex:440;background:var(--n-300);border-radius:var(--radius-xs)"></span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">
+                  <span>-10 dBm</span><span>-20</span><span>-25</span><span>-28</span><span>-30</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ opticalRows }}" as="o" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-hairline)">
+                    <span style="{{ o.dotStyle }}"></span>
+                    <span style="flex:1;font-size:var(--type-body-size)">{{ o.label }}</span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">{{ o.range }}</span>
+                    <span style="min-width:56px;text-align:right;font-size:var(--type-body-size);font-weight:500;font-variant-numeric:tabular-nums">{{ o.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <span style="font-size:var(--type-caption-size);color:var(--text-muted)">Thresholds follow the active device profile and can be changed in Fiber Configuration.</span>
+            </div>
+          </section>
+
+          <section style="display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <header style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px">
+              <div style="flex:1;min-width:0">
+                <h3 style="margin:0;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">Capacity Hotspots</h3>
+                <p style="margin:3px 0 0;font-size:var(--type-body-sm-size);color:var(--text-muted)">Port and splitter utilization</p>
+              </div>
+            </header>
+            <div style="display:flex;flex-direction:column;gap:16px;padding:0 20px 20px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.UtilizationBar" label="OLT PON ports" icon="hard-drive" value="71" ticks="28" hint-size="100%,52px"></x-import>
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.UtilizationBar" label="ODF ports" icon="layers" value="64" ticks="28" hint-size="100%,52px"></x-import>
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.UtilizationBar" label="Splitter outputs" icon="git-fork" value="83" ticks="28" hint-size="100%,52px"></x-import>
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.UtilizationBar" label="FDB subscriber ports" icon="package" value="92" ticks="28" hint-size="100%,52px"></x-import>
+              <div style="display:flex;flex-direction:column;padding-top:4px;border-top:1px solid var(--border-hairline)">
+                <sc-for list="{{ ponBuckets }}" as="b" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:10px;padding:9px 0">
+                    <span style="{{ b.dotStyle }}"></span>
+                    <span style="flex:1;font-size:var(--type-body-size)">{{ b.label }}</span>
+                    <span style="font-size:var(--type-body-size);font-weight:500;font-variant-numeric:tabular-nums">{{ b.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:16px">
+
+          <section style="flex:2 1 440px;min-width:0;display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <header style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px">
+              <div style="flex:1;min-width:0">
+                <h3 style="margin:0;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">Recent Incidents</h3>
+                <p style="margin:3px 0 0;font-size:var(--type-body-sm-size);color:var(--text-muted)">Topology-correlated events, last 24 h</p>
+              </div>
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="ghost" size="sm" hint-size="90px,32px">View all</x-import>
+            </header>
+            <div style="display:flex;flex-direction:column;padding:0 20px 20px">
+
+              <div style="display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border-hairline)">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto;border-radius:var(--radius-sm);background:var(--red-50)">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="triangle-alert" hint-size="17px,17px" style="width:17px;height:17px;background-color:var(--status-critical)"></x-import>
+                </span>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+                    <span style="font-size:var(--type-body-size);font-weight:600">Probable Distribution Fiber Fault</span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">INC-1045</span>
+                    <span style="flex:1"></span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted)">5 Min</span>
+                  </div>
+                  <p style="margin:0;font-size:var(--type-body-sm-size);line-height:1.5;color:var(--text-secondary);text-wrap:pretty">Eight ONUs on Distribution Cable DC-019 stopped responding within the same minute. All affected drops share FDB-018, which suggests a single fiber segment.</p>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.StatusPill" tone="critical" hint-size="80px,24px">Critical</x-import>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-secondary);padding:3px 8px;border-radius:var(--radius-xs);background:var(--n-50)">Closure CL-012 → FDB-018</span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-secondary);padding:3px 8px;border-radius:var(--radius-xs);background:var(--n-50)">8 subscribers affected</span>
+                    <span style="flex:1"></span>
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="secondary" size="sm" hint-size="120px,32px">View on Map</x-import>
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="ghost" size="sm" hint-size="70px,32px">Trace</x-import>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border-hairline)">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto;border-radius:var(--radius-sm);background:var(--amber-50)">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="git-fork" hint-size="17px,17px" style="width:17px;height:17px;background-color:var(--status-warn)"></x-import>
+                </span>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+                    <span style="font-size:var(--type-body-size);font-weight:600">PON-03 Capacity Warning</span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">INC-1044</span>
+                    <span style="flex:1"></span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted)">42 Min</span>
+                  </div>
+                  <p style="margin:0;font-size:var(--type-body-sm-size);line-height:1.5;color:var(--text-secondary);text-wrap:pretty">OLT Bogura-01 reports 92% subscriber capacity on PON-03. New activations on this port will fail once the splitter budget is exhausted.</p>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.StatusPill" tone="warn" hint-size="86px,24px">Warning</x-import>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-secondary);padding:3px 8px;border-radius:var(--radius-xs);background:var(--n-50)">OLT Bogura-01 / Slot 02 / PON 03</span>
+                    <span style="flex:1"></span>
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="ghost" size="sm" hint-size="110px,32px">Open OLT</x-import>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:14px;padding:16px 0">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto;border-radius:var(--radius-sm);background:var(--amber-50)">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="waves" hint-size="17px,17px" style="width:17px;height:17px;background-color:var(--status-warn)"></x-import>
+                </span>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+                    <span style="font-size:var(--type-body-size);font-weight:600">Optical Degradation on Feeder FC-002</span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">INC-1043</span>
+                    <span style="flex:1"></span>
+                    <span style="font-size:var(--type-caption-size);color:var(--text-muted)">1 h</span>
+                  </div>
+                  <p style="margin:0;font-size:var(--type-body-sm-size);line-height:1.5;color:var(--text-secondary);text-wrap:pretty">Measured Rx across 24 ONUs downstream of Core 11 is 5.3 dB below the calculated optical budget. Splice loss at Tray 2 / Splice 18 is the most likely cause.</p>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="display:inline-flex;align-items:baseline;gap:6px;font-size:var(--type-caption-size);color:var(--text-muted)">Expected <strong style="font-family:var(--font-display);font-size:var(--type-metric-sm-size);font-weight:500;color:var(--text-primary);font-variant-numeric:tabular-nums">-20.4</strong> dBm</span>
+                    <span style="display:inline-flex;align-items:baseline;gap:6px;font-size:var(--type-caption-size);color:var(--text-muted)">Live <strong style="font-family:var(--font-display);font-size:var(--type-metric-sm-size);font-weight:500;color:var(--amber-700);font-variant-numeric:tabular-nums">-25.7</strong> dBm</span>
+                    <span style="flex:1"></span>
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="ghost" size="sm" hint-size="130px,32px">Trace to OLT</x-import>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+            <header style="display:flex;align-items:flex-start;gap:12px;padding:16px 20px 12px">
+              <div style="flex:1;min-width:0">
+                <h3 style="margin:0;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">Deployment Growth</h3>
+                <p style="margin:3px 0 0;font-size:var(--type-body-sm-size);color:var(--text-muted)">Fiber deployed per month</p>
+              </div>
+            </header>
+            <div style="display:flex;flex-direction:column;gap:16px;padding:0 20px 20px">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.BarChart" data="{{ growthData }}" series="{{ growthSeries }}" height="190" unit="km" hint-size="100%,220px"></x-import>
+              <div style="display:flex;flex-direction:column;padding-top:4px;border-top:1px solid var(--border-hairline)">
+                <div style="display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--border-hairline)">
+                  <span style="flex:1;font-size:var(--type-body-size)">New routes</span>
+                  <span style="font-size:var(--type-body-size);font-weight:500;font-variant-numeric:tabular-nums">6</span>
+                </div>
+                <div style="display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--border-hairline)">
+                  <span style="flex:1;font-size:var(--type-body-size)">Added kilometers</span>
+                  <span style="font-size:var(--type-body-size);font-weight:500;font-variant-numeric:tabular-nums">12.8</span>
+                </div>
+                <div style="display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--border-hairline)">
+                  <span style="flex:1;font-size:var(--type-body-size)">New FDBs</span>
+                  <span style="font-size:var(--type-body-size);font-weight:500;font-variant-numeric:tabular-nums">14</span>
+                </div>
+                <div style="display:flex;align-items:center;padding:9px 0">
+                  <span style="flex:1;font-size:var(--type-body-size)">New subscribers</span>
+                  <span style="font-size:var(--type-body-size);font-weight:500;font-variant-numeric:tabular-nums">312</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section style="display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-hairline);border-radius:var(--radius-lg)">
+          <header style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px">
+            <div style="flex:1;min-width:0">
+              <h3 style="margin:0;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">POP Performance</h3>
+              <p style="margin:3px 0 0;font-size:var(--type-body-sm-size);color:var(--text-muted)">Ranked by subscribers served</p>
+            </div>
+            <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="ghost" size="sm" hint-size="90px,32px">Export</x-import>
+          </header>
+          <div style="padding:0 8px 8px">
+            <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.DataTable" columns="{{ popColumns }}" rows="{{ popRows }}" hint-size="100%,300px"></x-import>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultTimeRange&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;24 h&quot;,&quot;7 d&quot;,&quot;30 d&quot;],&quot;default&quot;:&quot;24 h&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Dashboard&quot;},&quot;sidebarCollapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;liveTelemetry&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Dashboard&quot;}}">
+const NAV = [
+  { id: 'main', label: '', items: [
+    { id: 'dashboard', label: 'Dashboard', icon: 'house' },
+    { id: 'map', label: 'Network Map', icon: 'map' },
+  ] },
+  { id: 'org', label: 'Organization', items: [
+    { id: 'branches', label: 'Branches', icon: 'building-2' },
+    { id: 'pops', label: 'POPs', icon: 'radio-tower' },
+    { id: 'customers', label: 'Customers', icon: 'users' },
+  ] },
+  { id: 'net', label: 'Network Infrastructure', items: [
+    { id: 'racks', label: 'Sites & Racks', icon: 'server' },
+    { id: 'olts', label: 'OLTs', icon: 'hard-drive' },
+    { id: 'odfs', label: 'ODFs', icon: 'layers' },
+    { id: 'routers', label: 'Routers', icon: 'router' },
+    { id: 'switches', label: 'Switches', icon: 'network' },
+    { id: 'cables', label: 'Fiber Cables', icon: 'cable' },
+    { id: 'closures', label: 'Closures', icon: 'box' },
+    { id: 'splitters', label: 'Splitters', icon: 'git-fork' },
+    { id: 'fdb', label: 'FDB / FAT', icon: 'package' },
+    { id: 'onus', label: 'ONUs / ONTs', icon: 'wifi' },
+  ] },
+  { id: 'mon', label: 'Monitoring', items: [
+    { id: 'health', label: 'Network Health', icon: 'activity' },
+    { id: 'optical', label: 'Optical Signals', icon: 'waves' },
+    { id: 'alarms', label: 'Alarms', icon: 'bell', badge: '12', badgeTone: 'warn' },
+    { id: 'incidents', label: 'Incidents', icon: 'triangle-alert', badge: '2', badgeTone: 'critical' },
+  ] },
+  { id: 'set', label: 'Settings', items: [
+    { id: 'users', label: 'Users', icon: 'users-round' },
+    { id: 'roles', label: 'Roles & Permissions', icon: 'lock' },
+    { id: 'netconf', label: 'Network Configuration', icon: 'settings-2' },
+    { id: 'fiberconf', label: 'Fiber Configuration', icon: 'sliders-horizontal' },
+    { id: 'profiles', label: 'Device Profiles', icon: 'cpu' },
+    { id: 'survey', label: 'Map / Survey Settings', icon: 'map-pin' },
+  ] },
+];
+
+class Component extends DCLogic {
+  state = {
+    active: 'dashboard',
+    collapsed: null,
+    open: { main: true, org: true, net: true, mon: true, set: false },
+    range: null,
+    secs: 3,
+    refreshing: false,
+    focus: null,
+  };
+
+  componentDidMount() {
+    if (this.props.liveTelemetry ?? true) {
+      this.timer = setInterval(() => this.setState(s => ({ secs: s.secs + 1 })), 1000);
+    }
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  get collapsed() { return this.state.collapsed ?? (this.props.sidebarCollapsed ?? false); }
+
+  refresh = () => {
+    this.setState({ refreshing: true, secs: 0 });
+    setTimeout(() => this.setState({ refreshing: false }), 700);
+  };
+
+  dot(color, size) {
+    return `width:${size || 8}px;height:${size || 8}px;flex:0 0 auto;border-radius:var(--radius-full);background:${color}`;
+  }
+
+  renderVals() {
+    const collapsed = this.collapsed;
+    const hidden = collapsed ? 'display:none' : 'display:flex;flex-direction:column;flex:1;min-width:0';
+    const labelHidden = collapsed ? 'display:none' : 'flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+
+    const navGroups = NAV.map(g => ({
+      label: g.label,
+      showLabel: !!g.label && !collapsed,
+      open: collapsed ? true : (this.state.open[g.id] !== false),
+      toggle: () => this.setState(s => ({ open: { ...s.open, [g.id]: s.open[g.id] === false } })),
+      chevronStyle: `display:flex;transition:transform var(--dur-fast) var(--ease-standard);transform:rotate(${this.state.open[g.id] === false ? -90 : 0}deg)`,
+      items: g.items.map(it => {
+        const active = it.id === this.state.active;
+        const badgeColor = it.badgeTone === 'critical' ? 'var(--status-critical)' : 'var(--status-warn)';
+        return {
+          label: it.label,
+          title: it.badge ? `${it.label} — ${it.badge}` : it.label,
+          icon: it.icon,
+          badge: it.badge,
+          badgeTone: it.badgeTone,
+          showLabel: !collapsed,
+          showBadge: !!it.badge && !collapsed,
+          showDot: !!it.badge && collapsed,
+          dotStyle: `position:absolute;top:-3px;right:-4px;width:7px;height:7px;border-radius:var(--radius-full);background:${badgeColor};box-shadow:0 0 0 2px var(--surface-inverse)`,
+          select: () => this.setState({ active: it.id }),
+          style: [
+            'display:flex;align-items:center;gap:10px;width:100%;height:36px;border:none;cursor:pointer',
+            collapsed ? 'padding:0;justify-content:center' : 'padding:0 10px',
+            'border-radius:var(--radius-sm);font-family:var(--font-body);font-size:var(--type-body-size)',
+            `font-weight:${active ? 500 : 400}`,
+            `background:${active ? 'var(--surface-inverse-hover)' : 'transparent'}`,
+            `color:${active ? 'var(--text-on-dark)' : 'var(--text-on-dark-muted)'}`,
+            'transition:background var(--dur-fast) var(--ease-standard),color var(--dur-fast) var(--ease-standard)',
+          ].join(';'),
+        };
+      }),
+    }));
+
+    const rowBtn = 'display:flex;align-items:center;gap:10px;width:100%;padding:10px 0;border:none;border-bottom:1px solid var(--border-hairline);background:transparent;font-family:var(--font-body);cursor:pointer';
+
+    const healthRows = [
+      ['Healthy Devices', '2,301', 'var(--status-ok)', 'healthy'],
+      ['Warning', '127', 'var(--status-warn)', 'warning'],
+      ['Critical', '18', 'var(--status-critical)', 'critical'],
+      ['Offline', '35', 'var(--status-idle)', 'offline'],
+    ].map(([label, value, color, id], i) => ({
+      label, value,
+      dotStyle: this.dot(color),
+      open: () => this.setState({ focus: id }),
+      style: rowBtn + (i === 3 ? ';border-bottom:none' : '') + (this.state.focus === id ? ';background:var(--surface-sunken)' : ''),
+    }));
+
+    const attention = [
+      ['2 critical incidents', 'Distribution fiber fault · Sherpur feeder', 'var(--status-critical)'],
+      ['8 PON ports above 85%', 'OLT Bogura-01, Bogura-03, Sherpur-02', 'var(--status-warn)'],
+      ['24 ONUs with weak optical signal', 'Rx below -25 dBm for over 30 minutes', 'var(--status-warn)'],
+      ['17 ONUs offline unexpectedly', 'No LOS reported by the parent PON port', 'var(--status-critical)'],
+    ].map(([title, meta, color], i) => ({
+      title, meta,
+      dotStyle: this.dot(color, 9),
+      open: () => this.setState({ focus: 'att' + i }),
+      style: 'display:flex;align-items:center;gap:12px;width:100%;padding:13px 0;border:none;border-bottom:' + (i === 3 ? 'none' : '1px solid var(--border-hairline)') + ';background:' + (this.state.focus === 'att' + i ? 'var(--surface-sunken)' : 'transparent') + ';cursor:pointer;transition:background var(--dur-fast) var(--ease-standard)',
+    }));
+
+    const LAYERS = [
+      ['pops', 'POPs', '12', '12 sites · 24 racks · 4 branches', 58, 0, 0],
+      ['olts', 'OLTs', '38', '38 devices · 608 PON ports', 71, 3, 1],
+      ['odfs', 'ODF Ports', '2,432', '46 ODFs · SC/APC documented both sides', 64, 0, 0],
+      ['pon', 'PON Ports', '608', '1:32 typical split · 486 splitters', 71, 8, 4],
+      ['closures', 'Closures & Splices', '214', '5,912 splices · 47 fiber routes', 47, 2, 1],
+      ['fdb', 'FDB / FAT Ports', '6,352', '397 boxes · 5,844 ports connected', 92, 12, 2],
+      ['onus', 'ONUs', '18,420', '17,984 online · 436 not reporting', 97, 24, 17],
+    ];
+    const layers = LAYERS.map(([id, label, count, meta, usage, warn, crit], i) => {
+      const color = usage >= 90 ? 'var(--status-critical)' : usage >= 75 ? 'var(--status-warn)' : 'var(--status-ok)';
+      const node = crit ? 'var(--status-critical)' : warn ? 'var(--status-warn)' : 'var(--status-ok)';
+      return {
+        label, count, meta, warn, crit,
+        usageLabel: usage + '%',
+        hasWarn: warn > 0, hasCrit: crit > 0, clear: !warn && !crit,
+        barStyle: `display:block;width:${usage}%;height:100%;border-radius:var(--radius-pill);background:${color}`,
+        chainStyle: `position:absolute;left:9px;width:1px;background:var(--border-hairline);top:${i === 0 ? '50%' : '0'};bottom:${i === LAYERS.length - 1 ? '50%' : '0'}`,
+        nodeStyle: `position:relative;width:7px;height:7px;border-radius:var(--radius-full);background:${node};box-shadow:0 0 0 3px var(--surface-card)`,
+        open: () => this.setState({ focus: id }),
+        rowStyle: 'display:grid;grid-template-columns:20px minmax(0,1fr) 120px 96px 16px;gap:12px;align-items:center;width:100%;padding:11px 0;border:none;border-bottom:1px solid var(--border-hairline);background:'
+          + (this.state.focus === id ? 'var(--surface-sunken)' : 'transparent')
+          + ';font-family:var(--font-body);cursor:pointer;transition:background var(--dur-fast) var(--ease-standard)',
+      };
+    });
+
+    const opticalRows = [
+      ['Excellent', '≥ -20 dBm', '8,412', 'var(--green-500)'],
+      ['Good', '-20 to -25', '7,922', 'var(--green-400)'],
+      ['Weak', '-25 to -28', '1,204', 'var(--amber-500)'],
+      ['Critical', '≤ -28', '442', 'var(--red-500)'],
+      ['Unknown', 'no reading', '440', 'var(--n-300)'],
+    ].map(([label, range, value, color]) => ({ label, range, value, dotStyle: this.dot(color) }));
+
+    const ponBuckets = [
+      ['Normal (< 70%)', '214', 'var(--status-ok)'],
+      ['70 – 85%', '48', 'var(--status-warn)'],
+      ['85 – 95%', '17', 'var(--status-critical)'],
+      ['Above 95%', '4', 'var(--red-700)'],
+    ].map(([label, value, color]) => ({ label, value, dotStyle: this.dot(color) }));
+
+    const pill = (tone, text) => React.createElement(
+      window.FiberOSDesignSystem_29ce8d.StatusPill, { tone }, text);
+
+    const usage = v => React.createElement('span', {
+      style: { display: 'inline-flex', alignItems: 'center', gap: 8, minWidth: 108 },
+    }, React.createElement('span', {
+      style: { flex: 1, height: 6, borderRadius: 'var(--radius-pill)', background: 'var(--viz-track)', overflow: 'hidden' },
+    }, React.createElement('span', {
+      style: {
+        display: 'block', width: v + '%', height: '100%', borderRadius: 'var(--radius-pill)',
+        background: v >= 90 ? 'var(--status-critical)' : v >= 75 ? 'var(--status-warn)' : 'var(--status-ok)',
+      },
+    })), React.createElement('span', { style: { fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' } }, v + '%'));
+
+    return {
+      navGroups,
+      layers,
+      healthRows,
+      attention,
+      opticalRows,
+      ponBuckets,
+      toggleCollapse: () => this.setState({ collapsed: !collapsed }),
+      collapseIcon: 'panel-left',
+      collapseLabel: collapsed ? 'Expand sidebar' : 'Collapse sidebar',
+      brandRowStyle: [
+        'display:flex;align-items:center;gap:10px;height:56px;flex:0 0 auto',
+        collapsed ? 'padding:0;justify-content:center' : 'padding:0 14px',
+        'border-bottom:1px solid var(--border-on-dark)',
+      ].join(';'),
+      toggleRowStyle: (collapsed ? 'padding:10px 14px 0;display:flex;justify-content:center' : 'padding:10px 8px 0;display:flex') + ';flex:0 0 auto',
+      collapseBtnStyle: [
+        'display:flex;align-items:center;gap:10px;height:32px;border:none;cursor:pointer',
+        collapsed ? 'width:32px;justify-content:center;padding:0' : 'width:100%;padding:0 10px',
+        'border-radius:var(--radius-sm);background:transparent;color:var(--text-on-dark-muted)',
+        'font-family:var(--font-body);transition:background var(--dur-fast) var(--ease-standard),color var(--dur-fast) var(--ease-standard)',
+      ].join(';'),
+      sidebarStyle: [
+        'display:flex;flex-direction:column;flex:0 0 auto',
+        `width:${collapsed ? 68 : 248}px`,
+        'background:var(--surface-inverse);border-right:1px solid var(--border-on-dark)',
+        'transition:width var(--dur-slow) var(--ease-standard)',
+      ].join(';'),
+      brandStyle: hidden,
+      sidebarFooterStyle: (collapsed ? 'display:none;' : 'display:block;') + 'flex:0 0 auto;padding:10px 12px 14px;border-top:1px solid var(--border-on-dark)',
+      range: this.state.range ?? (this.props.defaultTimeRange ?? '24 h'),
+      setRange: v => this.setState({ range: v }),
+      rangeOptions: ['24 h', '7 d', '30 d'],
+      popOptions: ['All POPs', 'Bogura Main', 'Bogura North', 'Sherpur', 'Shibganj'],
+      updatedLabel: this.state.refreshing ? 'Refreshing…' : `Updated ${this.state.secs} s ago.`,
+      refreshStyle: this.state.refreshing ? { animation: 'fos-spin 700ms linear' } : undefined,
+      onRefresh: this.refresh,
+      ponSegments: [
+        { label: 'Normal', value: 214, color: 'var(--status-ok)' },
+        { label: 'Near capacity', value: 48, color: 'var(--status-warn)' },
+        { label: 'Critical', value: 21, color: 'var(--status-critical)' },
+      ],
+      healthSegments: [
+        { label: 'Healthy', value: 2301, color: 'var(--status-ok)' },
+        { label: 'Warning', value: 127, color: 'var(--status-warn)' },
+        { label: 'Critical', value: 18, color: 'var(--status-critical)' },
+        { label: 'Offline', value: 35, color: 'var(--status-idle)' },
+      ],
+      healthTrend: [98.9, 98.8, 99.0, 98.6, 98.2, 98.4, 98.9, 99.1, 98.7, 98.3, 98.5, 98.7],
+      growthSeries: [{ key: 'km', label: 'Fiber km added', color: 'var(--viz-1)' }],
+      growthData: [
+        { label: 'Jan', km: 6.4 }, { label: 'Feb', km: 8.1 }, { label: 'Mar', km: 5.2 },
+        { label: 'Apr', km: 9.8 }, { label: 'May', km: 11.4 }, { label: 'Jun', km: 7.6 },
+        { label: 'Jul', km: 10.2 }, { label: 'Aug', km: 12.8 },
+      ],
+      popColumns: [
+        { key: 'pop', header: 'POP' },
+        { key: 'subs', header: 'Subscribers', align: 'right' },
+        { key: 'olts', header: 'OLTs', align: 'right' },
+        { key: 'usage', header: 'PON Usage', render: v => usage(v) },
+        { key: 'offline', header: 'Offline ONUs', align: 'right' },
+        { key: 'incidents', header: 'Incidents', align: 'right' },
+        { key: 'health', header: 'Health', render: v => pill(v[0], v[1]) },
+      ],
+      popRows: [
+        { id: 1, pop: 'Bogura Main', subs: '5,214', olts: 9, usage: 78, offline: 4, incidents: 1, health: ['warn', 'Warning'] },
+        { id: 2, pop: 'Sherpur', subs: '3,908', olts: 7, usage: 92, offline: 9, incidents: 1, health: ['critical', 'Critical'] },
+        { id: 3, pop: 'Bogura North', subs: '3,142', olts: 6, usage: 64, offline: 1, incidents: 0, health: ['ok', 'Healthy'] },
+        { id: 4, pop: 'Shibganj', subs: '2,486', olts: 5, usage: 58, offline: 2, incidents: 0, health: ['ok', 'Healthy'] },
+        { id: 5, pop: 'Dhunat', subs: '1,904', olts: 4, usage: 71, offline: 1, incidents: 0, health: ['ok', 'Healthy'] },
+        { id: 6, pop: 'Kahaloo', subs: '1,766', olts: 4, usage: 46, offline: 0, incidents: 0, health: ['ok', 'Healthy'] },
+      ],
+      onRowClick: () => {},
+    };
+  }
+}
+
+</script>
+</body>
+</html>

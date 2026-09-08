@@ -1,0 +1,97 @@
+:root{
+/* ---- Brand primitives (from the FiberOS brand sheet) ---- */
+--blue-500:#2563EB;   /* Primary — trust, reliability, core brand */
+--ink-900:#0B1220;    /* Secondary — depth, stability, navigation */
+--cyan-500:#00B8D9;   /* Accent — energy, innovation, highlights */
+--green-500:#16C784;  /* Accent 2 — success, status, positive actions */
+--n-50:#F5F7FA;       /* Surface — cards, panels, elevated surfaces */
+--n-0:#FFFFFF;        /* Background — page background, clean canvas */
+
+/* ---- Blue ramp ---- */
+--blue-50:#EFF5FF;--blue-100:#DBE7FE;--blue-200:#BFD4FD;--blue-300:#8FB3FA;
+--blue-400:#5C8DF5;--blue-600:#1D4ED8;--blue-700:#1E40AF;--blue-800:#1B3591;
+
+/* ---- Cyan ramp ---- */
+--cyan-50:#E6F9FC;--cyan-100:#CCF1F7;--cyan-200:#99E3EF;--cyan-400:#2AC6E0;
+--cyan-600:#0093AD;--cyan-700:#016E82;
+
+/* ---- Green ramp ---- */
+--green-50:#E8FBF3;--green-100:#D0F5E5;--green-200:#A2EBCB;--green-400:#3ED49A;
+--green-600:#0FA268;--green-700:#0A7A4F;
+
+/* ---- Amber ramp (semantic addition — warning states) ---- */
+--amber-50:#FEF6E8;--amber-100:#FDEBCD;--amber-200:#FAD79B;--amber-500:#F5A524;
+--amber-600:#C97F0F;--amber-700:#96600C;
+
+/* ---- Red ramp (semantic addition — critical states) ---- */
+--red-50:#FDECED;--red-100:#FBDDDE;--red-200:#F5BABC;--red-500:#E5484D;
+--red-600:#C22B30;--red-700:#961F23;
+
+/* ---- Violet (data-viz only) ---- */
+--violet-500:#7C5CFC;--violet-100:#E5DEFE;
+
+/* ---- Neutral ramp (hue-locked to --ink-900) ---- */
+--n-25:#FAFBFC;--n-100:#EDF0F5;--n-200:#DDE3EC;--n-300:#C3CCDA;
+--n-400:#94A0B4;--n-500:#6B7789;--n-600:#4A5567;--n-700:#2E3849;--n-800:#162031;
+
+/* ================= Semantic aliases ================= */
+/* Surfaces */
+--bg-canvas:var(--n-0);
+--bg-subtle:var(--n-50);
+--surface-card:var(--n-0);
+--surface-sunken:var(--n-50);
+--surface-hover:var(--n-100);
+--surface-inverse:var(--ink-900);
+--surface-inverse-raised:#111A2C;
+--surface-inverse-hover:rgba(255,255,255,.06);
+--surface-scrim:rgba(11,18,32,.48);
+
+/* Text */
+--text-primary:var(--ink-900);
+--text-secondary:var(--n-600);
+--text-muted:var(--n-500);
+--text-disabled:var(--n-400);
+--text-accent:var(--blue-500);
+--text-on-accent:var(--n-0);
+--text-on-dark:var(--n-0);
+--text-on-dark-muted:var(--n-400);
+
+/* Borders */
+--border-hairline:var(--n-200);
+--border-strong:var(--n-300);
+--border-accent:var(--blue-500);
+--border-focus:var(--blue-500);
+--border-on-dark:rgba(255,255,255,.10);
+
+/* Interactive */
+--action-primary:var(--blue-500);
+--action-primary-hover:var(--blue-600);
+--action-primary-active:var(--blue-700);
+--action-secondary-bg:var(--n-0);
+--action-secondary-border:var(--n-300);
+--action-ghost-hover:var(--n-100);
+--focus-ring:0 0 0 3px rgba(37,99,235,.28);
+
+/* Status — the monitoring vocabulary */
+--status-ok:var(--green-500);--status-ok-bg:var(--green-50);--status-ok-text:var(--green-700);
+--status-warn:var(--amber-500);--status-warn-bg:var(--amber-50);--status-warn-text:var(--amber-700);
+--status-critical:var(--red-500);--status-critical-bg:var(--red-50);--status-critical-text:var(--red-700);
+--status-info:var(--blue-500);--status-info-bg:var(--blue-50);--status-info-text:var(--blue-700);
+--status-active:var(--cyan-500);--status-active-bg:var(--cyan-50);--status-active-text:var(--cyan-700);
+--status-idle:var(--n-400);--status-idle-bg:var(--n-100);--status-idle-text:var(--n-600);
+
+/* Data visualisation — fixed series order */
+--viz-1:var(--blue-500);
+--viz-2:var(--cyan-500);
+--viz-3:var(--green-500);
+--viz-4:var(--violet-500);
+--viz-5:var(--amber-500);
+--viz-6:var(--red-500);
+--viz-rx:var(--green-500);
+--viz-tx:var(--blue-500);
+--viz-grid:var(--n-200);
+--viz-axis:var(--n-400);
+--viz-track:var(--n-100);
+--viz-area-from:rgba(37,99,235,.20);
+--viz-area-to:rgba(37,99,235,0);
+}

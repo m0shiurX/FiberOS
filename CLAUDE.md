@@ -194,3 +194,17 @@ Vue components must have a single root element.
 - IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
 
 </laravel-boost-guidelines>
+
+## Agent skills
+
+### Issue tracker
+
+This project uses GitHub Issues as its issue tracker. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+This project uses the five canonical triage labels. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repo with `CONTEXT.md` and `docs/adr/` at the root. See `docs/agents/domain.md`.

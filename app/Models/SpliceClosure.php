@@ -21,4 +21,9 @@ class SpliceClosure extends Model
     {
         return $this->hasMany(Splitter::class, 'closure_id');
     }
+
+    public function splices(): HasMany
+    {
+        return $this->hasMany(Splice::class, 'splice_closure_id');
+    }
 }

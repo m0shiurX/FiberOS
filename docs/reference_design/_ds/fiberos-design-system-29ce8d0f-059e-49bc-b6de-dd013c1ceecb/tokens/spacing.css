@@ -1,0 +1,29 @@
+:root{
+/* Base unit 4px. 17 is intentional — it is the kit's card/inline rhythm value, not a rounding error. */
+--space-xxs:4px;
+--space-xs:8px;
+--space-sm:12px;
+--space-md:17px;
+--space-lg:24px;
+--space-xl:32px;
+--space-xxl:48px;
+--space-section:80px;
+
+/* Dense-data additions — dashboard grids and table cells only. */
+--space-16:16px;
+--space-20:20px;
+--space-40:40px;
+
+/* Layout constants */
+--rail-width:56px;
+--sidebar-width:248px;
+--topbar-height:56px;
+--card-padding:20px;
+--grid-gutter:16px;
+--content-max:1440px;
+--row-height:48px;
+--control-height-sm:32px;
+--control-height-md:40px;
+--control-height-lg:48px;
+--touch-min:44px;
+}

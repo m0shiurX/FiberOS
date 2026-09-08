@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { FeatureCollection } from 'geojson';
 import * as maplibregl from 'maplibre-gl';
-import type { LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
+import type { ExpressionSpecification, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { onBeforeUnmount, onMounted, shallowRef, watch } from 'vue';
-import { CLOSURE_COLOR, FAULT_COLOR, LAYER_COLORS } from '@/lib/network-colors';
+import { CABLE_COLORS, CABLE_WEIGHTS, CLOSURE_COLOR, FAULT_COLOR, INCIDENT_COLOR, LAYER_COLORS, STATUS_COLORS } from '@/lib/network-colors';
 import type {
     AssetType,
     ConnectorFeature,
@@ -36,29 +36,27 @@ const emit = defineEmits<{
 const container = shallowRef<HTMLDivElement | null>(null);
 let map: maplibregl.Map | null = null;
 
-type PointLayerKey = Exclude<keyof NetworkLayers, 'fibers' | 'connectors'>;
-
-const POINT_LAYERS: {
-    key: PointLayerKey;
+interface PointLayerConfig {
+    key: string;
     type: AssetType;
     color: string;
     radius: number;
-}[] = [
-    { key: 'pops', type: 'pop', color: LAYER_COLORS.pop, radius: 9 },
+}
+
+// All point layers with their visual properties — distinct colors and radii per node type
+const POINT_LAYERS: PointLayerConfig[] = [
+    { key: 'pops', type: 'pop', color: LAYER_COLORS.pop, radius: 8 },
+    { key: 'racks', type: 'rack', color: LAYER_COLORS.rack, radius: 6 },
     { key: 'olts', type: 'olt', color: LAYER_COLORS.olt, radius: 7 },
+    { key: 'odfs', type: 'odf', color: LAYER_COLORS.odf, radius: 6 },
+    { key: 'routers', type: 'router', color: LAYER_COLORS.router, radius: 6 },
+    { key: 'switches', type: 'switch', color: LAYER_COLORS.switch, radius: 6 },
     { key: 'closures', type: 'closure', color: CLOSURE_COLOR, radius: 5 },
-    {
-        key: 'splitters',
-        type: 'splitter',
-        color: LAYER_COLORS.splitter,
-        radius: 6,
-    },
-    {
-        key: 'customers',
-        type: 'customer',
-        color: LAYER_COLORS.customer,
-        radius: 5,
-    },
+    { key: 'splitters', type: 'splitter', color: LAYER_COLORS.splitter, radius: 6 },
+    { key: 'poles', type: 'pole', color: LAYER_COLORS.pole, radius: 4 },
+    { key: 'manholes', type: 'manhole', color: LAYER_COLORS.manhole, radius: 5 },
+    { key: 'fdbs', type: 'fdb', color: LAYER_COLORS.fdb, radius: 6 },
+    { key: 'customers', type: 'customer', color: LAYER_COLORS.customer, radius: 5 },
 ];
 
 function traceKey(type: string, id: number) {
@@ -177,13 +175,13 @@ function applyData() {
     }
 
     for (const layer of POINT_LAYERS) {
+        const collection = props.layers[layer.key as keyof NetworkLayers] as GeoJsonFeatureCollection | undefined;
+        if (!collection) continue;
+
         const source = map.getSource(layer.key) as
             maplibregl.GeoJSONSource | undefined;
         source?.setData(
-            buildSource(
-                props.layers[layer.key],
-                layer.type,
-            ) as FeatureCollection,
+            buildSource(collection, layer.type) as FeatureCollection,
         );
     }
 
@@ -196,6 +194,11 @@ function applyData() {
     const connectorsSource = map.getSource('connectors') as
         maplibregl.GeoJSONSource | undefined;
     connectorsSource?.setData(buildConnectorsSource() as FeatureCollection);
+
+    // Incidents
+    const incidentSource = map.getSource('incidents') as
+        maplibregl.GeoJSONSource | undefined;
+    incidentSource?.setData(props.layers.incidents as FeatureCollection);
 }
 
 function applyVisibility() {
@@ -218,6 +221,14 @@ function applyVisibility() {
             'fibers',
             'visibility',
             props.visibleLayers.fiber ? 'visible' : 'none',
+        );
+    }
+
+    if (map.getLayer('incidents')) {
+        map.setLayoutProperty(
+            'incidents',
+            'visibility',
+            props.visibleLayers.incident ? 'visible' : 'none',
         );
     }
 }
@@ -252,7 +263,7 @@ function initialCenter(): [number, number] {
         return firstPop.geometry.coordinates;
     }
 
-    return [89.362841, 24.86549];
+    return [89.37010, 24.85560];
 }
 
 onMounted(() => {
@@ -264,7 +275,7 @@ onMounted(() => {
         container: container.value,
         style: OSM_STYLE,
         center: initialCenter(),
-        zoom: 16,
+        zoom: 15,
     });
 
     map.addControl(
@@ -278,6 +289,7 @@ onMounted(() => {
             return;
         }
 
+        // --- Connectors (links between assets) ---
         map.addSource('connectors', {
             type: 'geojson',
             data: buildConnectorsSource() as FeatureCollection,
@@ -310,20 +322,38 @@ onMounted(() => {
             },
         });
 
+        // --- Fiber cables ---
         map.addSource('fibers', {
             type: 'geojson',
-            data: buildSource(
-                props.layers.fibers,
-                'fiber',
-            ) as FeatureCollection,
+            data: buildSource(props.layers.fibers, 'fiber') as FeatureCollection,
         });
         map.addLayer({
             id: 'fibers',
             type: 'line',
             source: 'fibers',
             paint: {
-                'line-color': LAYER_COLORS.fiber,
-                'line-width': ['case', ['==', ['get', 'selected'], 1], 4, 2.5],
+                'line-color': [
+                    'match',
+                    ['get', 'type'],
+                    'Feeder', CABLE_COLORS.feeder,
+                    'Distribution', CABLE_COLORS.distribution,
+                    'Drop', CABLE_COLORS.drop,
+                    LAYER_COLORS.fiber,
+                ],
+                'line-width': [
+                    'match',
+                    ['get', 'type'],
+                    'Feeder', CABLE_WEIGHTS.feeder,
+                    'Distribution', CABLE_WEIGHTS.distribution,
+                    'Drop', CABLE_WEIGHTS.drop,
+                    2.5,
+                ] as ExpressionSpecification,
+                'line-dasharray': [
+                    'match',
+                    ['get', 'type'],
+                    'Drop', [3, 4],
+                    [1, 0],
+                ] as unknown as ExpressionSpecification,
                 'line-opacity': [
                     'case',
                     ['==', ['get', 'dimmed'], 1],
@@ -344,13 +374,14 @@ onMounted(() => {
             },
         });
 
+        // --- Point layers ---
         for (const layer of POINT_LAYERS) {
+            const collection = props.layers[layer.key as keyof NetworkLayers] as GeoJsonFeatureCollection | undefined;
+            if (!collection) continue;
+
             map.addSource(layer.key, {
                 type: 'geojson',
-                data: buildSource(
-                    props.layers[layer.key],
-                    layer.type,
-                ) as FeatureCollection,
+                data: buildSource(collection, layer.type) as FeatureCollection,
             });
             map.addLayer({
                 id: layer.key,
@@ -408,13 +439,47 @@ onMounted(() => {
             });
         }
 
+        // --- Incidents ---
+        map.addSource('incidents', {
+            type: 'geojson',
+            data: props.layers.incidents as FeatureCollection,
+        });
+        map.addLayer({
+            id: 'incidents-halo',
+            type: 'circle',
+            source: 'incidents',
+            paint: {
+                'circle-color': INCIDENT_COLOR,
+                'circle-radius': 16,
+                'circle-blur': 0.7,
+                'circle-opacity': 0.35,
+            },
+        });
+        map.addLayer({
+            id: 'incidents-marker',
+            type: 'circle',
+            source: 'incidents',
+            paint: {
+                'circle-color': INCIDENT_COLOR,
+                'circle-radius': 9,
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#ffffff',
+            },
+        });
+        map.on('click', 'incidents-marker', (e) => {
+            if (e.features?.[0]) {
+                handleClick(e.features[0]);
+            }
+        });
+
+        // --- Pulse route ---
         map.addSource('pulse', { type: 'geojson', data: emptyPoint() });
         map.addLayer({
             id: 'pulse-glow',
             type: 'circle',
             source: 'pulse',
             paint: {
-                'circle-color': '#00b8d9',
+                'circle-color': '#00B8D9',
                 'circle-radius': 14,
                 'circle-blur': 1,
                 'circle-opacity': 0.5,
@@ -428,12 +493,13 @@ onMounted(() => {
                 'circle-color': '#ffffff',
                 'circle-radius': 5,
                 'circle-stroke-width': 2,
-                'circle-stroke-color': '#00b8d9',
+                'circle-stroke-color': '#00B8D9',
             },
         });
         map.setLayoutProperty('pulse-glow', 'visibility', 'none');
         map.setLayoutProperty('pulse-core', 'visibility', 'none');
 
+        // --- Fault marker ---
         map.addSource('fault', { type: 'geojson', data: emptyPoint() });
         map.addLayer({
             id: 'fault-halo',
@@ -553,8 +619,6 @@ function startPulse(route: [number, number][]) {
     map.setLayoutProperty('pulse-glow', 'visibility', 'visible');
     map.setLayoutProperty('pulse-core', 'visibility', 'visible');
 
-    // Frame the whole route so the pulse travelling from source to customer stays on screen —
-    // the camera is otherwise still zoomed in from the earlier flyTo-to-customer on selection.
     const bounds = route.reduce(
         (b, coordinate) => b.extend(coordinate as LngLatLike),
         new maplibregl.LngLatBounds(
@@ -612,8 +676,6 @@ function stopFault() {
     }
 }
 
-// A pulsing "alarm beacon" at the break point — driven by JS since paint properties can't
-// animate over time on their own, only in response to data/zoom changes.
 function startFault(breakPoint: [number, number]) {
     if (!map) {
         return;

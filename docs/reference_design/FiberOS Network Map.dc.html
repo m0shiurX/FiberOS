@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/colors.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/typography.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/radius.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/motion.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/tokens/base.css">
+<link rel="stylesheet" href="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/styles.css">
+<script src="_ds/fiberos-design-system-29ce8d0f-059e-49bc-b6de-dd013c1ceecb/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<style>
+html, body { margin: 0; padding: 0; background: var(--bg-subtle); }
+a { color: var(--text-accent); text-decoration: none; }
+a:hover { color: var(--blue-600); }
+@keyframes fos-pulse { 0% { opacity: 1; } 50% { opacity: .35; } 100% { opacity: 1; } }
+.leaflet-container { font-family: var(--font-body); background: var(--n-100); }
+.leaflet-control-zoom a { border-radius: var(--radius-sm) !important; color: var(--text-primary) !important; border-color: var(--border-hairline) !important; }
+.leaflet-control-attribution { font-size: 10px !important; background: rgba(255,255,255,.8) !important; color: var(--text-muted) !important; }
+</style>
+</helmet>
+
+<div style="display:flex;height:100vh;overflow:hidden;background:var(--bg-subtle);font-family:var(--font-body);font-size:var(--type-body-size);color:var(--text-primary);-webkit-font-smoothing:antialiased">
+
+  <aside style="{{ sidebarStyle }}">
+    <div style="{{ brandRowStyle }}">
+      <span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex:0 0 auto;border-radius:var(--radius-sm);background:var(--action-primary);font-family:var(--font-display);font-size:13px;font-weight:700;color:#fff">F</span>
+      <span style="{{ brandStyle }}">
+        <span style="font-family:var(--font-display);font-size:16px;font-weight:600;letter-spacing:-0.2px;color:var(--text-on-dark)">FiberOS</span>
+        <span style="font-size:11px;letter-spacing:.2px;color:var(--text-on-dark-muted)">GIS &amp; Inventory</span>
+      </span>
+    </div>
+
+    <nav style="flex:1;min-height:0;overflow-y:auto;padding:10px 8px 14px;display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;gap:2px;padding-bottom:8px">
+          <sc-if value="{{ g.showLabel }}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{ g.toggle }}" style="display:flex;align-items:center;gap:6px;width:100%;height:26px;padding:0 10px;margin-top:6px;border:none;background:transparent;font-family:var(--font-body);font-size:11px;font-weight:500;letter-spacing:.4px;color:var(--n-500);cursor:pointer">
+              <span style="flex:1;text-align:left">{{ g.label }}</span>
+              <span style="{{ g.chevronStyle }}">
+                <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="chevron-down" hint-size="12px,12px" style="width:12px;height:12px"></x-import>
+              </span>
+            </button>
+          </sc-if>
+          <sc-if value="{{ g.open }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <button type="button" onClick="{{ it.select }}" title="{{ it.title }}" style="{{ it.style }}">
+                <span style="position:relative;display:inline-flex;flex:0 0 auto">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="{{ it.icon }}" hint-size="16px,16px"></x-import>
+                  <sc-if value="{{ it.showDot }}">
+                    <span style="{{ it.dotStyle }}"></span>
+                  </sc-if>
+                </span>
+                <sc-if value="{{ it.showLabel }}" hint-placeholder-val="{{ true }}">
+                  <span style="flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.label }}</span>
+                </sc-if>
+                <sc-if value="{{ it.showBadge }}">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Badge" tone="{{ it.badgeTone }}" hint-size="22px,20px">{{ it.badge }}</x-import>
+                </sc-if>
+              </button>
+            </sc-for>
+          </sc-if>
+        </div>
+      </sc-for>
+    </nav>
+
+    <div style="{{ sidebarFooterStyle }}">
+      <div style="display:flex;align-items:center;gap:8px;padding:10px;border-radius:var(--radius-md);background:rgba(255,255,255,.04)">
+        <span style="width:7px;height:7px;flex:0 0 auto;border-radius:var(--radius-full);background:var(--cyan-500);animation:fos-pulse 2.4s var(--ease-standard) infinite"></span>
+        <span style="display:flex;flex-direction:column;min-width:0">
+          <span style="font-size:13px;font-weight:500;color:var(--text-on-dark)">Production</span>
+          <span style="font-size:11px;color:var(--text-on-dark-muted)">Bogura Region · 12 POPs</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <header style="display:flex;align-items:center;gap:14px;height:56px;flex:0 0 auto;padding:0 20px;background:rgba(245,247,250,.80);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border-hairline)">
+      <button type="button" onClick="{{ toggleCollapse }}" aria-label="{{ collapseLabel }}" title="{{ collapseLabel }}" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto;border:1px solid var(--border-hairline);border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);cursor:pointer;transition:background var(--dur-fast) var(--ease-standard),color var(--dur-fast) var(--ease-standard)" style-hover="background:var(--action-ghost-hover);color:var(--text-primary)">
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="panel-left" hint-size="17px,17px" style="width:17px;height:17px"></x-import>
+      </button>
+      <div style="flex:1;min-width:180px;max-width:460px">
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.SearchField" placeholder="Search devices, customers, POPs, fibers..." hint-size="100%,40px"></x-import>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:0 0 auto;margin-left:auto">
+        <span style="position:relative;display:inline-flex;flex:0 0 auto">
+          <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.IconButton" name="bell" label="2 critical alarms" variant="outline" hint-size="34px,34px"></x-import>
+          <span style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:var(--radius-full);background:var(--status-critical);border:1.5px solid var(--bg-subtle)"></span>
+        </span>
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" size="sm" hint-size="120px,32px">Quick add</x-import>
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.AccountChip" name="ADM1013-10" hint-size="150px,40px" style="white-space:nowrap;flex:0 0 auto"></x-import>
+      </div>
+    </header>
+
+    <main data-screen-label="Network Map" style="flex:1;min-height:0;display:flex;flex-direction:column">
+
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex:0 0 auto;padding:12px 20px;background:var(--surface-card);border-bottom:1px solid var(--border-hairline)">
+        <div style="flex:0 1 280px;min-width:180px">
+          <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.SearchField" placeholder="Search network..." size="sm" hint-size="100%,36px"></x-import>
+        </div>
+        <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.SegmentedControl" options="{{ modeOptions }}" value="{{ mode }}" onChange="{{ setMode }}" hint-size="320px,38px"></x-import>
+        <div style="display:flex;align-items:center;gap:4px;padding:3px;border:1px solid var(--border-hairline);border-radius:var(--radius-md);background:var(--bg-subtle)">
+          <sc-for list="{{ tools }}" as="t" hint-placeholder-count="6">
+            <button type="button" onClick="{{ t.pick }}" title="{{ t.label }}" aria-label="{{ t.label }}" style="{{ t.style }}">
+              <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Icon" name="{{ t.icon }}" hint-size="16px,16px" style="width:16px;height:16px"></x-import>
+            </button>
+          </sc-for>
+        </div>
+        <span style="flex:1"></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:var(--radius-pill);background:var(--cyan-50);font-size:var(--type-caption-size);font-weight:500;color:var(--cyan-700)">
+          <span style="width:6px;height:6px;border-radius:var(--radius-full);background:var(--cyan-500);animation:fos-pulse 2.4s var(--ease-standard) infinite"></span>Live telemetry
+        </span>
+        <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">{{ toolHint }}</span>
+        <span style="width:1px;height:18px;background:var(--border-hairline)"></span>
+        <span style="font-size:var(--type-caption-size);color:var(--text-secondary);font-variant-numeric:tabular-nums;white-space:nowrap">{{ statusLine }}</span>
+      </div>
+
+      <div style="flex:1;min-height:0;display:flex">
+
+        <div style="position:relative;flex:1;min-width:0;border-right:1px solid var(--border-hairline)">
+          <x-import component-from-global-scope="fiber-map" from="./fiber-map.js" hint-size="100%,100%"></x-import>
+
+          <div style="position:absolute;left:16px;bottom:16px;z-index:500;display:flex;flex-direction:column;gap:8px;padding:12px 14px;background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border:1px solid var(--border-hairline);border-radius:var(--radius-md)">
+            <span style="font-size:var(--type-micro-size);font-weight:600;letter-spacing:.3px;color:var(--text-muted)">Fiber</span>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="display:flex;align-items:center;gap:8px;font-size:var(--type-caption-size);color:var(--text-secondary)">
+                <span style="width:20px;height:3px;border-radius:2px;background:var(--blue-600)"></span>Feeder
+              </span>
+              <span style="display:flex;align-items:center;gap:8px;font-size:var(--type-caption-size);color:var(--text-secondary)">
+                <span style="width:20px;height:3px;border-radius:2px;background:var(--cyan-500)"></span>Distribution
+              </span>
+              <span style="display:flex;align-items:center;gap:8px;font-size:var(--type-caption-size);color:var(--text-secondary)">
+                <span style="width:20px;height:0;border-top:2px dashed var(--n-400)"></span>Drop
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <aside style="flex:0 0 auto;width:336px;display:flex;flex-direction:column;background:var(--surface-card);overflow:hidden">
+          <div style="flex:0 0 auto;padding:12px 16px;border-bottom:1px solid var(--border-hairline)">
+            <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.SegmentedControl" options="{{ tabOptions }}" value="{{ tab }}" onChange="{{ setTab }}" hint-size="100%,38px" style="width:100%"></x-import>
+          </div>
+
+          <sc-if value="{{ showLayers }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;min-height:0;overflow-y:auto">
+              <div style="display:flex;align-items:center;gap:8px;padding:14px 16px 10px">
+                <span style="flex:1;font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">Layers</span>
+                <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">{{ layerCountLabel }}</span>
+                <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.IconButton" name="eye" label="Show all layers" size="sm" onClick="{{ showAll }}" hint-size="28px,28px"></x-import>
+                <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.IconButton" name="eye-off" label="Hide all layers" size="sm" onClick="{{ hideAll }}" hint-size="28px,28px"></x-import>
+              </div>
+              <sc-for list="{{ layerGroups }}" as="g" hint-placeholder-count="5">
+                <div style="display:flex;flex-direction:column;padding:0 8px 6px">
+                  <div style="display:flex;align-items:center;gap:8px;padding:8px 8px 6px">
+                    <span style="font-size:var(--type-micro-size);font-weight:600;letter-spacing:.3px;color:var(--text-muted)">{{ g.label }}</span>
+                    <span style="font-size:var(--type-micro-size);color:var(--text-disabled);font-variant-numeric:tabular-nums">{{ g.ratio }}</span>
+                  </div>
+                  <sc-for list="{{ g.items }}" as="l" hint-placeholder-count="4">
+                    <button type="button" onClick="{{ l.toggle }}" style="{{ l.rowStyle }}">
+                      <span style="{{ l.swatchStyle }}"></span>
+                      <span style="flex:1;text-align:left;font-size:var(--type-body-size);color:var(--text-primary)">{{ l.label }}</span>
+                      <span style="font-size:var(--type-caption-size);color:var(--text-muted);font-variant-numeric:tabular-nums">{{ l.count }}</span>
+                      <span style="{{ l.trackStyle }}"><span style="{{ l.knobStyle }}"></span></span>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-for>
+              <div style="padding:10px 16px 20px">
+                <span style="display:block;font-size:var(--type-caption-size);color:var(--text-muted);text-wrap:pretty">Layer counts come from inventory. Amber halos mark live signal and capacity warnings reported by telemetry.</span>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showDetails }}">
+            <div style="flex:1;min-height:0;overflow-y:auto">
+              <sc-if value="{{ hasSelection }}">
+                <div style="display:flex;flex-direction:column;gap:16px;padding:16px">
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <span style="font-size:var(--type-micro-size);font-weight:600;letter-spacing:.3px;color:var(--text-muted)">{{ sel.kind }}</span>
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <span style="flex:1;min-width:0;font-family:var(--font-display);font-size:var(--type-heading-md-size);font-weight:600;letter-spacing:-0.3px">{{ sel.name }}</span>
+                      <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.StatusPill" tone="{{ sel.tone }}" hint-size="80px,24px">{{ sel.statusLabel }}</x-import>
+                    </div>
+                    <span style="font-size:var(--type-body-sm-size);color:var(--text-muted);text-wrap:pretty">{{ sel.summary }}</span>
+                  </div>
+
+                  <div style="display:flex;flex-direction:column">
+                    <sc-for list="{{ sel.fields }}" as="f" hint-placeholder-count="7">
+                      <div style="display:flex;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--border-hairline)">
+                        <span style="flex:0 0 108px;font-size:var(--type-body-sm-size);color:var(--text-muted)">{{ f.label }}</span>
+                        <span style="flex:1;text-align:right;font-size:var(--type-body-size);font-weight:500;font-variant-numeric:tabular-nums;word-break:break-word">{{ f.value }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <sc-if value="{{ sel.hasTelemetry }}">
+                    <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:var(--bg-subtle);border:1px solid var(--border-hairline);border-radius:var(--radius-md)">
+                      <div style="display:flex;align-items:center;gap:8px">
+                        <span style="width:6px;height:6px;border-radius:var(--radius-full);background:var(--cyan-500);animation:fos-pulse 2.4s var(--ease-standard) infinite"></span>
+                        <span style="flex:1;font-size:var(--type-body-sm-size);font-weight:500">Telemetry</span>
+                        <span style="font-size:var(--type-caption-size);color:var(--text-muted)">{{ sel.lastSeen }}</span>
+                      </div>
+                      <sc-for list="{{ sel.telemetry }}" as="t" hint-placeholder-count="5">
+                        <div style="display:flex;align-items:baseline;gap:12px">
+                          <span style="flex:1;font-size:var(--type-body-sm-size);color:var(--text-muted)">{{ t.label }}</span>
+                          <span style="{{ t.valueStyle }}">{{ t.value }}</span>
+                          <span style="font-size:var(--type-caption-size);color:var(--text-muted)">{{ t.unit }}</span>
+                        </div>
+                      </sc-for>
+                      <div style="display:flex;align-items:baseline;gap:12px;padding-top:8px;border-top:1px solid var(--border-hairline)">
+                        <span style="flex:1;font-size:var(--type-body-sm-size);color:var(--text-muted)">Expected Rx</span>
+                        <span style="font-family:var(--font-display);font-size:var(--type-metric-sm-size);font-weight:500;font-variant-numeric:tabular-nums">{{ sel.expectedRx }}</span>
+                        <span style="font-size:var(--type-caption-size);color:var(--text-muted)">dBm</span>
+                      </div>
+                      <span style="font-size:var(--type-caption-size);color:var(--text-secondary);text-wrap:pretty">{{ sel.budgetNote }}</span>
+                    </div>
+                  </sc-if>
+
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <span style="font-size:var(--type-micro-size);font-weight:600;letter-spacing:.3px;color:var(--text-muted)">Connectivity</span>
+                    <sc-for list="{{ sel.chain }}" as="c" hint-placeholder-count="3">
+                      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border-hairline);border-radius:var(--radius-sm)">
+                        <span style="{{ c.dirStyle }}">{{ c.dir }}</span>
+                        <span style="display:flex;flex-direction:column;min-width:0;flex:1">
+                          <span style="font-size:var(--type-body-sm-size);font-weight:500">{{ c.title }}</span>
+                          <span style="font-size:var(--type-caption-size);color:var(--text-muted)">{{ c.sub }}</span>
+                        </span>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" block="{{ true }}" size="sm" hint-size="100%,32px">Open Details</x-import>
+                    <div style="display:flex;gap:8px">
+                      <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="secondary" size="sm" block="{{ true }}" onClick="{{ runTrace }}" hint-size="50%,32px">Trace</x-import>
+                      <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="secondary" size="sm" block="{{ true }}" hint-size="50%,32px">Monitor</x-import>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noSelection }}">
+                <div style="padding:20px">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.EmptyState" icon="map-pin" title="No object selected" description="Select a POP, OLT, closure, splitter, FDB or ONU on the map to inspect its inventory record and live telemetry." hint-size="100%,220px"></x-import>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showTrace }}">
+            <div style="flex:1;min-height:0;overflow-y:auto">
+              <sc-if value="{{ hasTrace }}">
+                <div style="display:flex;flex-direction:column;gap:14px;padding:16px">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <span style="font-size:var(--type-micro-size);font-weight:600;letter-spacing:.3px;color:var(--text-muted)">Physical Path</span>
+                    <span style="font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:500;letter-spacing:-0.15px">{{ trace.title }}</span>
+                    <span style="font-size:var(--type-body-sm-size);color:var(--text-muted)">{{ trace.subtitle }}</span>
+                  </div>
+                  <div style="display:flex;gap:8px">
+                    <div style="flex:1;display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:var(--bg-subtle);border:1px solid var(--border-hairline);border-radius:var(--radius-sm)">
+                      <span style="font-size:var(--type-caption-size);color:var(--text-muted)">Route length</span>
+                      <span style="font-family:var(--font-display);font-size:var(--type-metric-sm-size);font-weight:500;font-variant-numeric:tabular-nums">{{ trace.distance }}</span>
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:var(--bg-subtle);border:1px solid var(--border-hairline);border-radius:var(--radius-sm)">
+                      <span style="font-size:var(--type-caption-size);color:var(--text-muted)">Splices</span>
+                      <span style="font-family:var(--font-display);font-size:var(--type-metric-sm-size);font-weight:500;font-variant-numeric:tabular-nums">{{ trace.splices }}</span>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column">
+                    <sc-for list="{{ trace.hops }}" as="h" hint-placeholder-count="9">
+                      <div style="display:grid;grid-template-columns:18px minmax(0,1fr);gap:12px">
+                        <span style="position:relative;display:flex;align-items:center;justify-content:center">
+                          <span style="{{ h.railStyle }}"></span>
+                          <span style="{{ h.nodeStyle }}"></span>
+                        </span>
+                        <span style="display:flex;flex-direction:column;gap:1px;padding:7px 0">
+                          <span style="font-size:var(--type-body-size);font-weight:500">{{ h.title }}</span>
+                          <span style="font-size:var(--type-caption-size);color:var(--text-muted)">{{ h.sub }}</span>
+                        </span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="secondary" size="sm" block="{{ true }}" onClick="{{ fitTrace }}" hint-size="100%,32px">Zoom to route</x-import>
+                    <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="ghost" size="sm" block="{{ true }}" onClick="{{ clearTrace }}" hint-size="100%,32px">Clear trace</x-import>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noTrace }}">
+                <div style="padding:20px">
+                  <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.EmptyState" icon="git-fork" title="Nothing traced yet" description="Select an ONU and run Trace to follow the physical path back to the OLT, hop by hop." hint-size="100%,200px"></x-import>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <div style="flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--border-hairline);background:var(--bg-subtle)">
+            <span style="width:8px;height:8px;flex:0 0 auto;border-radius:var(--radius-full);background:var(--status-critical)"></span>
+            <span style="flex:1;min-width:0;display:flex;flex-direction:column">
+              <span style="font-size:var(--type-body-sm-size);font-weight:500">INC-1045 · DC-019</span>
+              <span style="font-size:var(--type-caption-size);color:var(--text-muted)">8 subscribers offline · Closure CL-012 → FDB-018</span>
+            </span>
+            <x-import component-from-global-scope="FiberOSDesignSystem_29ce8d.Button" variant="ghost" size="sm" onClick="{{ openIncident }}" hint-size="70px,32px">Open</x-import>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultViewMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Location&quot;,&quot;Network&quot;,&quot;Logical&quot;,&quot;Coordinates&quot;],&quot;default&quot;:&quot;Location&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Map&quot;},&quot;sidebarCollapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+const NAV = [
+  { id: 'main', label: '', items: [
+    { id: 'dashboard', label: 'Dashboard', icon: 'house' },
+    { id: 'map', label: 'Network Map', icon: 'map' },
+  ] },
+  { id: 'org', label: 'Organization', items: [
+    { id: 'branches', label: 'Branches', icon: 'building-2' },
+    { id: 'pops', label: 'POPs', icon: 'radio-tower' },
+    { id: 'customers', label: 'Customers', icon: 'users' },
+  ] },
+  { id: 'net', label: 'Network Infrastructure', items: [
+    { id: 'racks', label: 'Sites & Racks', icon: 'server' },
+    { id: 'olts', label: 'OLTs', icon: 'hard-drive' },
+    { id: 'odfs', label: 'ODFs', icon: 'layers' },
+    { id: 'routers', label: 'Routers', icon: 'router' },
+    { id: 'switches', label: 'Switches', icon: 'network' },
+    { id: 'cables', label: 'Fiber Cables', icon: 'cable' },
+    { id: 'closures', label: 'Closures', icon: 'box' },
+    { id: 'splitters', label: 'Splitters', icon: 'git-fork' },
+    { id: 'fdb', label: 'FDB / FAT', icon: 'package' },
+    { id: 'onus', label: 'ONUs / ONTs', icon: 'wifi' },
+  ] },
+  { id: 'mon', label: 'Monitoring', items: [
+    { id: 'health', label: 'Network Health', icon: 'activity' },
+    { id: 'optical', label: 'Optical Signals', icon: 'waves' },
+    { id: 'alarms', label: 'Alarms', icon: 'bell', badge: '12', badgeTone: 'warn' },
+    { id: 'incidents', label: 'Incidents', icon: 'triangle-alert', badge: '2', badgeTone: 'critical' },
+  ] },
+  { id: 'set', label: 'Settings', items: [
+    { id: 'users', label: 'Users', icon: 'users-round' },
+    { id: 'roles', label: 'Roles & Permissions', icon: 'lock' },
+    { id: 'netconf', label: 'Network Configuration', icon: 'settings-2' },
+    { id: 'fiberconf', label: 'Fiber Configuration', icon: 'sliders-horizontal' },
+    { id: 'profiles', label: 'Device Profiles', icon: 'cpu' },
+    { id: 'survey', label: 'Map / Survey Settings', icon: 'map-pin' },
+  ] },
+];
+
+const F = (label, value) => ({ label, value });
+
+const NODES = [
+  { id: 'POP-BGR-01', type: 'pop', kind: 'Point of Presence', name: 'Bogura Main', lat: 24.8556, lng: 89.3701, status: 'online',
+    summary: 'Primary POP for the Bogura region. Feeds 9 OLTs and 5,214 subscribers.',
+    fields: [F('Code', 'POP-BGR-01'), F('Branch', 'Bogura'), F('Type', 'Core POP'), F('Racks', '2 of 4 populated'), F('Subscribers', '5,214'), F('Address', 'Uposhohor Sarak, Bogura'), F('Coordinates', '24.85560, 89.37010')],
+    chain: [['down', 'ODF-01', 'Fiber handover · 96 ports'], ['down', 'OLT-BGR-01', 'GPON · 16 PON ports']] },
+  { id: 'RK-01', type: 'rack', kind: 'Rack', name: 'RK-01', lat: 24.8558, lng: 89.3704, status: 'online',
+    summary: 'Access rack carrying the OLT, ODF and aggregation switch.',
+    fields: [F('POP', 'Bogura Main'), F('Rack units', '42U'), F('Occupied', '19U'), F('Vendor', 'Netrack'), F('Power', '4.2 kW')],
+    chain: [['up', 'POP-BGR-01', 'Bogura Main']] },
+  { id: 'RK-02', type: 'rack', kind: 'Rack', name: 'RK-02', lat: 24.8553, lng: 89.3698, status: 'online',
+    summary: 'Transmission rack, reserved for the second OLT shelf.',
+    fields: [F('POP', 'Bogura Main'), F('Rack units', '42U'), F('Occupied', '6U'), F('Vendor', 'Netrack'), F('Power', '1.1 kW')],
+    chain: [['up', 'POP-BGR-01', 'Bogura Main']] },
+  { id: 'OLT-BGR-01', type: 'olt', kind: 'OLT', name: 'OLT-BGR-01', lat: 24.8557, lng: 89.3703, status: 'warning',
+    summary: 'Two PON ports are above the capacity threshold. Optical drift reported on PON-07.',
+    fields: [F('Vendor', 'Huawei'), F('Model', 'MA5800-X7'), F('Technology', 'GPON'), F('POP / Rack', 'Bogura Main / RK-01'), F('Rack position', 'U14 · 4U'), F('Management IP', '10.20.4.11'), F('PON ports', '16 × GPON'), F('ONUs', '836'), F('Warnings', '2')],
+    chain: [['up', 'ODF-01', 'Port 31 · SC/APC'], ['down', 'PON-07', '1:32 split · 214 ONUs']] },
+  { id: 'RTR-BGR-01', type: 'router', kind: 'Router', name: 'RTR-BGR-01', lat: 24.8559, lng: 89.3699, status: 'online',
+    summary: 'Edge router terminating the inter-POP uplinks.',
+    fields: [F('Vendor', 'Cisco'), F('Model', 'ASR 920'), F('Management IP', '10.20.4.1'), F('Uplinks', '2 × 100G QSFP28'), F('Throughput', '78 Gbps peak')],
+    chain: [['down', 'SW-BGR-01', 'LACP · 2 × 10G']] },
+  { id: 'SW-BGR-01', type: 'switch', kind: 'Switch', name: 'SW-BGR-01', lat: 24.8554, lng: 89.3706, status: 'online',
+    summary: 'Aggregation switch between the edge router and the OLT shelves.',
+    fields: [F('Vendor', 'Juniper'), F('Model', 'EX4400'), F('Layer', 'L3'), F('Management IP', '10.20.4.4'), F('Ports', '24 × RJ45 1G · 4 × SFP+ 10G')],
+    chain: [['up', 'RTR-BGR-01', 'LACP · 2 × 10G'], ['down', 'OLT-BGR-01', 'VLAN 812 · uplink 1']] },
+  { id: 'ODF-01', type: 'odf', kind: 'ODF', name: 'ODF-01', lat: 24.8552, lng: 89.3703, status: 'online',
+    summary: 'Fiber handover frame. Both sides of every adapter are documented.',
+    fields: [F('POP / Rack', 'Bogura Main / RK-01'), F('Ports', '96 × SC/APC'), F('Connected', '61'), F('Free', '35'), F('Front (P31)', 'OLT-BGR-01 / PON-07'), F('Back (P31)', 'FC-002 / Core 11')],
+    chain: [['up', 'OLT-BGR-01', 'PON-07 patch cord'], ['down', 'FC-002', 'Feeder · 48 cores']] },
+  { id: 'CL-011', type: 'closure', kind: 'Fiber Closure', name: 'CL-011', lat: 24.8512, lng: 89.3718, status: 'online',
+    summary: 'Through-splice closure on the Uposhohor feeder run.',
+    fields: [F('Type', 'Inline · 4 trays'), F('Splices', '36 of 96'), F('Cable entries', '4'), F('Mounted on', 'Pole PL-104'), F('Coordinates', '24.85120, 89.37180')],
+    chain: [['up', 'FC-002', 'Core 01–48 through'], ['down', 'CL-012', 'Feeder continues 0.94 km']] },
+  { id: 'CL-012', type: 'closure', kind: 'Fiber Closure', name: 'CL-012', lat: 24.8471, lng: 89.3739, status: 'warning',
+    summary: 'Splitter closure. Tray 2 / Splice 18 shows 1.9 dB above expected loss.',
+    fields: [F('Type', 'Dome · 6 trays'), F('Splices', '68 of 144'), F('Cable entries', '6'), F('Splitter', 'SP-019 · 1:32'), F('Alias', 'TJ Box 12'), F('Coordinates', '24.84710, 89.37390')],
+    chain: [['up', 'FC-002', 'Core 11 · feeder'], ['down', 'SP-019', 'Splitter input'], ['down', 'DC-019', 'Distribution · 24 cores']] },
+  { id: 'CL-013', type: 'closure', kind: 'Fiber Closure', name: 'CL-013', lat: 24.8498, lng: 89.3776, status: 'online',
+    summary: 'Splitter closure serving the eastern distribution branch.',
+    fields: [F('Type', 'Dome · 4 trays'), F('Splices', '41 of 96'), F('Cable entries', '4'), F('Splitter', 'SP-024 · 1:16'), F('Coordinates', '24.84980, 89.37760')],
+    chain: [['up', 'FC-005', 'Core 07 · feeder'], ['down', 'DC-017', 'Distribution · 12 cores']] },
+  { id: 'SP-019', type: 'splitter', kind: 'Splitter', name: 'SP-019', lat: 24.8469, lng: 89.3743, status: 'online', flag: 'capacity',
+    summary: 'Primary splitter for the southern distribution area. 29 of 32 outputs in use.',
+    fields: [F('Ratio', '1:32'), F('Technology', 'PLC'), F('Installed in', 'Closure CL-012'), F('Input', 'FC-002 / Core 11'), F('Outputs used', '29 of 32'), F('Insertion loss', '17.1 dB expected')],
+    chain: [['up', 'CL-012', 'Tray 2 / Splice 18'], ['down', 'DC-019', 'Output 06 · Core 09']] },
+  { id: 'SP-024', type: 'splitter', kind: 'Splitter', name: 'SP-024', lat: 24.8500, lng: 89.3778, status: 'online',
+    summary: 'Eastern branch splitter with spare capacity for two more FDBs.',
+    fields: [F('Ratio', '1:16'), F('Technology', 'PLC'), F('Installed in', 'Closure CL-013'), F('Input', 'FC-005 / Core 07'), F('Outputs used', '11 of 16'), F('Insertion loss', '13.8 dB expected')],
+    chain: [['up', 'CL-013', 'Tray 1 / Splice 06'], ['down', 'DC-017', 'Output 03 · Core 04']] },
+  { id: 'SP-031', type: 'splitter', kind: 'Splitter', name: 'SP-031', lat: 24.8447, lng: 89.3712, status: 'online',
+    summary: 'Western branch splitter mounted in a pole cabinet.',
+    fields: [F('Ratio', '1:16'), F('Technology', 'PLC'), F('Installed in', 'Cabinet CB-004'), F('Input', 'FC-002 / Core 14'), F('Outputs used', '9 of 16'), F('Insertion loss', '13.8 dB expected')],
+    chain: [['up', 'CL-012', 'Tray 3 / Splice 27'], ['down', 'DC-022', 'Output 09 · Core 12']] },
+  { id: 'FDB-018', type: 'fdb', kind: 'FDB / FAT', name: 'FDB-018', lat: 24.8449, lng: 89.3762, status: 'critical',
+    summary: 'All eight subscriber drops on this box stopped responding within the same minute.',
+    fields: [F('Type', 'Wall FAT · 8 ports'), F('Ports used', '8 of 8'), F('Fed by', 'DC-019 / Core 09'), F('Mounted on', 'Pole PL-127'), F('Incident', 'INC-1045'), F('Coordinates', '24.84490, 89.37620')],
+    chain: [['up', 'DC-019', 'Core 09 · distribution'], ['down', 'C-1001 … C-1008', '8 drop fibers']] },
+  { id: 'FDB-023', type: 'fdb', kind: 'FDB / FAT', name: 'FDB-023', lat: 24.8492, lng: 89.3792, status: 'online', flag: 'capacity',
+    summary: 'Eastern box near capacity. One port is reserved for a pending activation.',
+    fields: [F('Type', 'Pole FAT · 8 ports'), F('Ports used', '7 of 8'), F('Fed by', 'DC-017 / Core 04'), F('Mounted on', 'Pole PL-118'), F('Coordinates', '24.84920, 89.37920')],
+    chain: [['up', 'DC-017', 'Core 04 · distribution'], ['down', 'C-2001 … C-2003', '3 active drops']] },
+  { id: 'FDB-031', type: 'fdb', kind: 'FDB / FAT', name: 'FDB-031', lat: 24.8438, lng: 89.3701, status: 'online',
+    summary: 'Western box with free ports for new activations.',
+    fields: [F('Type', 'Wall FAT · 8 ports'), F('Ports used', '3 of 8'), F('Fed by', 'DC-022 / Core 12'), F('Mounted on', 'Building wall'), F('Coordinates', '24.84380, 89.37010')],
+    chain: [['up', 'DC-022', 'Core 12 · distribution'], ['down', 'C-3001 … C-3003', '3 active drops']] },
+  { id: 'PL-104', type: 'pole', kind: 'Pole', name: 'PL-104', lat: 24.8531, lng: 89.3713, status: 'online',
+    summary: 'Aerial support carrying closure CL-011.', fields: [F('Type', 'Concrete 9 m'), F('Assets', 'CL-011'), F('Owner', 'FiberOS')], chain: [['down', 'CL-011', 'Closure mounted']] },
+  { id: 'PL-118', type: 'pole', kind: 'Pole', name: 'PL-118', lat: 24.8491, lng: 89.3789, status: 'online',
+    summary: 'Aerial support carrying FDB-023.', fields: [F('Type', 'Concrete 9 m'), F('Assets', 'FDB-023'), F('Owner', 'FiberOS')], chain: [['down', 'FDB-023', 'FAT mounted']] },
+  { id: 'PL-127', type: 'pole', kind: 'Pole', name: 'PL-127', lat: 24.8451, lng: 89.3758, status: 'online',
+    summary: 'Aerial support carrying FDB-018.', fields: [F('Type', 'Steel 8 m'), F('Assets', 'FDB-018'), F('Owner', 'Leased')], chain: [['down', 'FDB-018', 'FAT mounted']] },
+  { id: 'MH-07', type: 'manhole', kind: 'Manhole', name: 'MH-07', lat: 24.8522, lng: 89.3722, status: 'online',
+    summary: 'Duct chamber on the feeder route.', fields: [F('Type', 'Handhole 600'), F('Ducts', '2 × 40 mm'), F('Slack', '18 m FC-002')], chain: [['up', 'FC-002', 'Feeder passes through']] },
+  { id: 'MH-09', type: 'manhole', kind: 'Manhole', name: 'MH-09', lat: 24.8480, lng: 89.3745, status: 'online',
+    summary: 'Duct chamber before the CL-012 splitter closure.', fields: [F('Type', 'Handhole 600'), F('Ducts', '2 × 40 mm'), F('Slack', '22 m FC-002')], chain: [['up', 'FC-002', 'Feeder passes through']] },
+];
+
+const ONUS = [
+  ['C-1001', 'FDB-018', 24.8444, 89.3757, 'offline', 1, '-27.4', 4.61],
+  ['C-1002', 'FDB-018', 24.8446, 89.3768, 'offline', 2, '-25.7', 4.82],
+  ['C-1003', 'FDB-018', 24.8441, 89.3765, 'offline', 3, '-26.9', 4.88],
+  ['C-1004', 'FDB-018', 24.8452, 89.3771, 'offline', 4, '-28.2', 4.74],
+  ['C-1005', 'FDB-018', 24.8455, 89.3757, 'offline', 5, '-26.1', 4.55],
+  ['C-1006', 'FDB-018', 24.8443, 89.3752, 'offline', 6, '-27.8', 4.63],
+  ['C-1007', 'FDB-018', 24.8457, 89.3766, 'offline', 7, '-25.9', 4.91],
+  ['C-1008', 'FDB-018', 24.8438, 89.3772, 'offline', 8, '-26.4', 4.97],
+  ['C-2001', 'FDB-023', 24.8497, 89.3798, 'online', 1, '-21.8', 3.42],
+  ['C-2002', 'FDB-023', 24.8488, 89.3801, 'warning', 2, '-25.4', 3.68],
+  ['C-2003', 'FDB-023', 24.8485, 89.3788, 'online', 4, '-22.6', 3.51],
+  ['C-3001', 'FDB-031', 24.8432, 89.3695, 'online', 1, '-20.9', 5.12],
+  ['C-3002', 'FDB-031', 24.8434, 89.3708, 'warning', 2, '-25.1', 5.24],
+  ['C-3003', 'FDB-031', 24.8428, 89.3703, 'online', 3, '-21.4', 5.31],
+];
+
+const UPSTREAM = {
+  'FDB-018': { drop: 'DC-019', cable: 'DC-019', core: 9, closure: 'CL-012', tray: 2, splice: 18, splitter: 'SP-019', output: 6, feeder: 'FC-002', fcore: 11, odfPort: 31, slot: 2, pon: 7, splices: 4, expected: '-20.4' },
+  'FDB-023': { cable: 'DC-017', core: 4, closure: 'CL-013', tray: 1, splice: 6, splitter: 'SP-024', output: 3, feeder: 'FC-005', fcore: 7, odfPort: 18, slot: 1, pon: 3, splices: 3, expected: '-21.2' },
+  'FDB-031': { cable: 'DC-022', core: 12, closure: 'CL-012', tray: 3, splice: 27, splitter: 'SP-031', output: 9, feeder: 'FC-002', fcore: 14, odfPort: 33, slot: 2, pon: 9, splices: 5, expected: '-21.6' },
+};
+
+const CABLES = [
+  { id: 'FC-002', type: 'feeder', kind: 'Feeder Cable', name: 'FC-002', status: 'online', cores: 48, length: '3.18 km',
+    path: [[24.8552, 89.3703], [24.8531, 89.3713], [24.8512, 89.3718], [24.8492, 89.3730], [24.8471, 89.3739]] },
+  { id: 'FC-005', type: 'feeder', kind: 'Feeder Cable', name: 'FC-005', status: 'online', cores: 24, length: '2.74 km',
+    path: [[24.8552, 89.3703], [24.8528, 89.3735], [24.8510, 89.3760], [24.8498, 89.3776]] },
+  { id: 'DC-019', type: 'distribution', kind: 'Distribution Cable', name: 'DC-019', status: 'critical', cores: 24, length: '0.41 km',
+    path: [[24.8471, 89.3739], [24.8462, 89.3750], [24.8449, 89.3762]] },
+  { id: 'DC-017', type: 'distribution', kind: 'Distribution Cable', name: 'DC-017', status: 'online', cores: 12, length: '0.28 km',
+    path: [[24.8498, 89.3776], [24.8494, 89.3786], [24.8492, 89.3792]] },
+  { id: 'DC-022', type: 'distribution', kind: 'Distribution Cable', name: 'DC-022', status: 'online', cores: 24, length: '0.62 km',
+    path: [[24.8471, 89.3739], [24.8455, 89.3720], [24.8447, 89.3712], [24.8438, 89.3701]] },
+];
+
+const LAYER_GROUPS = [
+  { label: 'SITES', items: [['pop', 'POP'], ['rack', 'Rack / Cabinet'], ['pole', 'Pole'], ['manhole', 'Manhole']] },
+  { label: 'ACTIVE EQUIPMENT', items: [['olt', 'OLT'], ['router', 'Router'], ['switch', 'Switch'], ['onu', 'ONU']] },
+  { label: 'PASSIVE OPTICAL', items: [['odf', 'ODF'], ['closure', 'Closure'], ['splitter', 'Splitter'], ['fdb', 'FDB / FAT']] },
+  { label: 'FIBER', items: [['feeder', 'Feeder Cable'], ['distribution', 'Distribution Cable'], ['drop', 'Drop Cable']] },
+  { label: 'OPERATIONAL', items: [['connections', 'Connections'], ['incidents', 'Incidents'], ['signal', 'Signal Warnings'], ['capacity', 'Capacity Warnings']] },
+];
+
+const SWATCH = {
+  pop: 'background:var(--blue-600);border-radius:3px', rack: 'background:#fff;border:2px solid var(--n-600);border-radius:2px',
+  pole: 'background:var(--n-400);border-radius:50%', manhole: 'background:#fff;border:2px solid var(--n-400);border-radius:2px',
+  olt: 'background:var(--viz-4);border-radius:3px', router: 'background:var(--ink-900);border-radius:3px',
+  switch: 'background:var(--n-600);border-radius:3px', onu: 'background:var(--green-500);border-radius:50%',
+  odf: 'background:var(--cyan-500);border-radius:2px', closure: 'background:var(--cyan-500);border-radius:2px;transform:rotate(45deg)',
+  splitter: 'background:var(--ink-900);border-radius:50%', fdb: 'background:#fff;border:3px solid var(--ink-900);border-radius:2px',
+  feeder: 'background:var(--blue-600);border-radius:2px;height:3px;width:14px', distribution: 'background:var(--cyan-500);border-radius:2px;height:3px;width:14px',
+  drop: 'border-top:2px dashed var(--n-400);height:0;width:14px', connections: 'border-top:1px dashed var(--n-500);height:0;width:14px',
+  incidents: 'background:var(--red-500);border-radius:50%', signal: 'background:var(--amber-500);border-radius:50%',
+  capacity: 'background:var(--amber-500);border-radius:2px',
+};
+
+const TONE = { online: ['ok', 'Online'], warning: ['warn', 'Warning'], critical: ['critical', 'Critical'], offline: ['idle', 'Offline'] };
+
+class Component extends DCLogic {
+  state = {
+    active: 'map', collapsed: null, open: { main: true, org: true, net: true, mon: true, set: false },
+    mode: null, tool: 'Select', tab: 'Layers', selected: null, trace: null, hidden: {}, follow: 0, fit: 0,
+  };
+
+  componentDidMount() {
+    this._onSelect = e => {
+      const id = e.detail.id;
+      this.setState(s => ({ selected: id, tab: 'Details', follow: s.follow + 1 }));
+    };
+    window.addEventListener('fos:map-select', this._onSelect);
+    this.push();
+  }
+  componentDidUpdate() { this.push(); }
+  componentWillUnmount() { window.removeEventListener('fos:map-select', this._onSelect); }
+
+  get collapsed() { return this.state.collapsed ?? (this.props.sidebarCollapsed ?? false); }
+  get mode() { return this.state.mode ?? (this.props.defaultViewMode ?? 'Location'); }
+
+  nodes() {
+    const onus = ONUS.map(([id, fdb, lat, lng, status, port, rx]) => ({
+      id, type: 'onu', kind: 'ONU / ONT', name: id, lat, lng, status,
+      flag: status === 'warning' ? 'signal' : null, fdb, port, rx,
+    }));
+    return NODES.concat(onus);
+  }
+
+  cables() {
+    const drops = ONUS.map(([id, fdb, lat, lng]) => {
+      const box = NODES.find(n => n.id === fdb);
+      return { id: 'D-' + id.slice(2), type: 'drop', kind: 'Drop Cable', name: 'D-' + id.slice(2), status: 'online', cores: 1, length: '0.04 km', path: [[box.lat, box.lng], [lat, lng]] };
+    });
+    return CABLES.concat(drops);
+  }
+
+  visible() {
+    const h = this.state.hidden;
+    const mode = this.mode;
+    const v = {};
+    LAYER_GROUPS.forEach(g => g.items.forEach(([k]) => { v[k] = !h[k]; }));
+    if (mode === 'Logical') { v.feeder = false; v.distribution = false; v.drop = false; v.connections = !h.connections; }
+    if (mode === 'Coordinates') { v.connections = false; }
+    if (mode === 'Network') { v.connections = !h.connections; }
+    return v;
+  }
+
+  traceFor(id) {
+    const onu = ONUS.find(o => o[0] === id);
+    if (!onu) return null;
+    const [cid, fdb, , , status, port, rx, km] = onu;
+    const u = UPSTREAM[fdb];
+    const drop = 'D-' + cid.slice(2);
+    const hops = [
+      ['Customer ' + cid, 'House ' + port + ', Uposhohor Sarak, Bogura'],
+      ['ONU ' + cid, 'VSOL V2802RH · Rx ' + rx + ' dBm'],
+      ['Drop ' + drop, 'Single core · 0.04 km'],
+      [fdb + ' / Port ' + String(port).padStart(2, '0'), 'SC/APC subscriber port'],
+      [u.cable + ' / Core ' + String(u.core).padStart(2, '0'), 'Distribution cable'],
+      [u.closure + ' / Tray ' + u.tray, 'Splice ' + String(u.splice).padStart(2, '0')],
+      [u.splitter + ' / Output ' + String(u.output).padStart(2, '0'), 'PLC splitter'],
+      [u.feeder + ' / Core ' + String(u.fcore).padStart(2, '0'), 'Feeder cable'],
+      ['ODF-01 / Port ' + u.odfPort, 'SC/APC adapter'],
+      ['OLT-BGR-01', 'Slot ' + String(u.slot).padStart(2, '0') + ' / PON ' + String(u.pon).padStart(2, '0')],
+    ];
+    return {
+      onu: cid, status,
+      title: cid + ' → OLT-BGR-01',
+      subtitle: 'Physical path, ten hops. Inventory records; telemetry confirms.',
+      distance: km.toFixed(2) + ' km',
+      splices: String(u.splices),
+      hops,
+      ids: [cid, drop, fdb, u.cable, u.closure, u.splitter, u.feeder, 'ODF-01', 'OLT-BGR-01'],
+    };
+  }
+
+  push() {
+    const trace = this.state.trace ? this.traceFor(this.state.trace) : null;
+    const detail = {
+      data: {
+        nodes: this.nodes().map(n => ({ id: n.id, type: n.type, name: n.name, lat: n.lat, lng: n.lng, status: n.status, flag: n.flag })),
+        cables: this.cables().map(c => ({ id: c.id, type: c.type, path: c.path })),
+        links: ONUS.map(([id, fdb]) => [fdb, id]).concat([['SP-019', 'FDB-018'], ['SP-024', 'FDB-023'], ['SP-031', 'FDB-031'], ['OLT-BGR-01', 'SP-019'], ['OLT-BGR-01', 'SP-024'], ['OLT-BGR-01', 'SP-031']]),
+        incidents: [{ id: 'INC-1045', lat: 24.8462, lng: 89.3750 }],
+      },
+      visible: this.visible(),
+      selected: this.state.selected,
+      trace: trace ? trace.ids : [],
+      follow: this.state.follow,
+      fit: this.state.fit,
+    };
+    window.__FOS_MAP_STATE = detail;
+    window.dispatchEvent(new CustomEvent('fos:map-state', { detail }));
+  }
+
+  selection() {
+    const id = this.state.selected;
+    if (!id) return null;
+    if (id === 'INC-1045') {
+      return {
+        kind: 'Incident', name: 'INC-1045', tone: 'critical', statusLabel: 'Critical',
+        summary: 'Eight ONUs on Distribution Cable DC-019 stopped responding within the same minute. All affected drops share FDB-018, which suggests a single fiber segment.',
+        fields: [F('Type', 'Probable fiber fault'), F('Cable', 'DC-019 / Core 09'), F('Segment', 'CL-012 → FDB-018'), F('Affected subscribers', '8'), F('First detected', '14:32'), F('Duration', '38 Min')],
+        chain: [['up', 'CL-012', 'Tray 2 / Splice 18'], ['down', 'FDB-018', '8 subscriber ports']],
+        hasTelemetry: false, traceTarget: 'C-1002',
+      };
+    }
+    const cable = this.cables().find(c => c.id === id);
+    if (cable) {
+      const t = TONE[cable.status] || TONE.online;
+      return {
+        kind: cable.kind, name: cable.name, tone: t[0], statusLabel: t[1],
+        summary: cable.type === 'drop' ? 'Single-core drop fiber from the FAT to the subscriber ONU.' : cable.status === 'critical' ? 'Core 09 carries no light. Downstream FDB-018 is dark.' : 'Installed and documented. Every used core is traceable end to end.',
+        fields: [F('Type', cable.kind), F('Cores', String(cable.cores)), F('GIS length', cable.length), F('Standard', cable.type === 'drop' ? 'G.657A2' : 'G.652D'), F('Installation', 'Aerial')],
+        chain: [['up', cable.path.length ? 'Upstream node' : '', 'Route start'], ['down', 'Downstream node', 'Route end']],
+        hasTelemetry: false, traceTarget: null,
+      };
+    }
+    const onu = ONUS.find(o => o[0] === id);
+    if (onu) {
+      const [cid, fdb, lat, lng, status, port, rx, km] = onu;
+      const u = UPSTREAM[fdb];
+      const t = TONE[status] || TONE.online;
+      const live = status === 'offline' ? '—' : rx;
+      return {
+        kind: 'ONU / ONT', name: cid, tone: t[0], statusLabel: t[1],
+        summary: status === 'offline'
+          ? 'The ONU stopped reporting at 14:32 together with seven others on FDB-018.'
+          : status === 'warning' ? 'Rx power is below the profile threshold for this device class.' : 'Reporting normally on the last poll.',
+        fields: [
+          F('Serial', 'VSL2300' + String(1900 + port)), F('Vendor / Model', 'VSOL V2802RH'),
+          F('Customer', 'Subscriber ' + cid.slice(2)), F('Address', 'House ' + port + ', Uposhohor Sarak, Bogura'),
+          F('OLT / PON', 'OLT-BGR-01 · Slot ' + String(u.slot).padStart(2, '0') + ' / PON ' + String(u.pon).padStart(2, '0')),
+          F('Splitter', u.splitter + ' / Output ' + String(u.output).padStart(2, '0')),
+          F('FDB port', fdb + ' / Port ' + String(port).padStart(2, '0')),
+          F('Coordinates', lat.toFixed(5) + ', ' + lng.toFixed(5)),
+        ],
+        hasTelemetry: true,
+        lastSeen: status === 'offline' ? 'Last seen 38 Min ago' : 'Last seen 4 sec ago',
+        telemetry: [
+          { label: 'Rx power', value: live, unit: 'dBm', bad: status !== 'online' },
+          { label: 'Tx power', value: status === 'offline' ? '—' : '2.4', unit: 'dBm', bad: false },
+          { label: 'OLT Rx', value: status === 'offline' ? '—' : (parseFloat(rx) - 1.3).toFixed(1), unit: 'dBm', bad: false },
+          { label: 'Distance', value: km.toFixed(2), unit: 'km', bad: false },
+          { label: 'Temperature', value: status === 'offline' ? '—' : '49', unit: '°C', bad: false },
+        ],
+        expectedRx: u.expected,
+        budgetNote: status === 'offline'
+          ? 'No live reading. Last measurement was 5.3 dB below the calculated optical budget.'
+          : status === 'warning' ? 'Live Rx is ' + (parseFloat(rx) - parseFloat(u.expected)).toFixed(1) + ' dB below the calculated budget.' : 'Live Rx is within the calculated optical budget.',
+        chain: [['up', fdb + ' / Port ' + String(port).padStart(2, '0'), 'Drop D-' + cid.slice(2)], ['up', u.splitter, 'Output ' + String(u.output).padStart(2, '0')], ['up', 'OLT-BGR-01', 'PON ' + String(u.pon).padStart(2, '0')]],
+        traceTarget: cid,
+      };
+    }
+    const n = this.nodes().find(x => x.id === id);
+    if (!n) return null;
+    const t = TONE[n.status] || TONE.online;
+    return {
+      kind: n.kind, name: n.name, tone: t[0], statusLabel: t[1], summary: n.summary,
+      fields: n.fields, hasTelemetry: false,
+      chain: (n.chain || []).map(c => [c[0], c[1], c[2]]),
+      traceTarget: null,
+    };
+  }
+
+  renderVals() {
+    const collapsed = this.collapsed;
+    const hiddenStyle = collapsed ? 'display:none' : 'display:flex;flex-direction:column;flex:1;min-width:0';
+    const tab = this.state.tab;
+    const sel = this.selection();
+    const trace = this.state.trace ? this.traceFor(this.state.trace) : null;
+    const v = this.visible();
+
+    const navGroups = NAV.map(g => ({
+      label: g.label, showLabel: !!g.label && !collapsed,
+      open: collapsed ? true : (this.state.open[g.id] !== false),
+      toggle: () => this.setState(s => ({ open: { ...s.open, [g.id]: s.open[g.id] === false } })),
+      chevronStyle: `display:flex;transition:transform var(--dur-fast) var(--ease-standard);transform:rotate(${this.state.open[g.id] === false ? -90 : 0}deg)`,
+      items: g.items.map(it => {
+        const active = it.id === this.state.active;
+        return {
+          label: it.label, title: it.badge ? `${it.label} — ${it.badge}` : it.label, icon: it.icon,
+          badge: it.badge, badgeTone: it.badgeTone,
+          showLabel: !collapsed, showBadge: !!it.badge && !collapsed, showDot: !!it.badge && collapsed,
+          dotStyle: `position:absolute;top:-3px;right:-4px;width:7px;height:7px;border-radius:var(--radius-full);background:${it.badgeTone === 'critical' ? 'var(--status-critical)' : 'var(--status-warn)'};box-shadow:0 0 0 2px var(--surface-inverse)`,
+          select: () => this.setState({ active: it.id }),
+          style: [
+            'display:flex;align-items:center;gap:10px;width:100%;height:36px;border:none;cursor:pointer',
+            collapsed ? 'padding:0;justify-content:center' : 'padding:0 10px',
+            'border-radius:var(--radius-sm);font-family:var(--font-body);font-size:var(--type-body-size)',
+            `font-weight:${active ? 500 : 400}`,
+            `background:${active ? 'var(--surface-inverse-hover)' : 'transparent'}`,
+            `color:${active ? 'var(--text-on-dark)' : 'var(--text-on-dark-muted)'}`,
+            'transition:background var(--dur-fast) var(--ease-standard),color var(--dur-fast) var(--ease-standard)',
+          ].join(';'),
+        };
+      }),
+    }));
+
+    const nodes = this.nodes();
+    const cables = this.cables();
+    const counts = {
+      connections: nodes.filter(n => n.type === 'onu').length + 6,
+      incidents: 1,
+      signal: nodes.filter(n => n.flag === 'signal').length,
+      capacity: nodes.filter(n => n.flag === 'capacity').length,
+    };
+    nodes.forEach(n => { counts[n.type] = (counts[n.type] || 0) + 1; });
+    cables.forEach(c => { counts[c.type] = (counts[c.type] || 0) + 1; });
+
+    let shown = 0, total = 0;
+    const layerGroups = LAYER_GROUPS.map(g => {
+      let on = 0;
+      const items = g.items.map(([key, label]) => {
+        const isOn = v[key] !== false;
+        if (isOn) on++;
+        shown += isOn ? 1 : 0; total++;
+        return {
+          label, count: String(counts[key] || 0),
+          toggle: () => this.setState(s => ({ hidden: { ...s.hidden, [key]: !s.hidden[key] } })),
+          rowStyle: 'display:flex;align-items:center;gap:10px;width:100%;padding:8px;border:none;border-radius:var(--radius-sm);background:transparent;font-family:var(--font-body);cursor:pointer;transition:background var(--dur-fast) var(--ease-standard)',
+          swatchStyle: 'width:11px;height:11px;flex:0 0 auto;opacity:' + (isOn ? 1 : .35) + ';' + (SWATCH[key] || 'background:var(--n-400)'),
+          trackStyle: 'position:relative;flex:0 0 auto;width:32px;height:18px;border-radius:var(--radius-pill);transition:background var(--dur-fast) var(--ease-standard);background:' + (isOn ? 'var(--action-primary)' : 'var(--n-300)'),
+          knobStyle: 'position:absolute;top:2px;left:' + (isOn ? 16 : 2) + 'px;width:14px;height:14px;border-radius:var(--radius-full);background:#fff;transition:left var(--dur-fast) var(--ease-standard)',
+        };
+      });
+      return { label: g.label, ratio: on + '/' + g.items.length, items };
+    });
+
+    const TOOLS = [
+      ['Select', 'mouse-pointer-2', 'Click a node or cable to inspect it.'],
+      ['Add component', 'plus', 'Click the map to place a new network object.'],
+      ['Draw fiber', 'pen-line', 'Click to draw a route; double-click to finish.'],
+      ['Measure distance', 'ruler', 'Click two points to measure along the route.'],
+      ['Trace network', 'git-fork', 'Select an ONU to trace the physical path to the OLT.'],
+      ['Affected subscribers', 'users', 'Select a cable or closure to list subscribers behind it.'],
+    ];
+    const tools = TOOLS.map(([label, icon]) => ({
+      label, icon,
+      pick: () => this.setState({ tool: label }),
+      style: 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--dur-fast) var(--ease-standard),color var(--dur-fast) var(--ease-standard);background:'
+        + (this.state.tool === label ? 'var(--surface-card)' : 'transparent') + ';box-shadow:' + (this.state.tool === label ? 'inset 0 0 0 1px var(--border-hairline)' : 'none')
+        + ';color:' + (this.state.tool === label ? 'var(--text-accent)' : 'var(--text-muted)'),
+    }));
+    const toolHint = (TOOLS.find(t => t[0] === this.state.tool) || TOOLS[0])[2];
+
+    const selVals = sel ? {
+      kind: sel.kind, name: sel.name, tone: sel.tone, statusLabel: sel.statusLabel, summary: sel.summary,
+      fields: sel.fields, hasTelemetry: !!sel.hasTelemetry, lastSeen: sel.lastSeen,
+      telemetry: (sel.telemetry || []).map(t => ({
+        label: t.label, value: t.value, unit: t.unit,
+        valueStyle: 'font-family:var(--font-display);font-size:var(--type-metric-sm-size);font-weight:500;font-variant-numeric:tabular-nums;color:' + (t.bad ? 'var(--amber-700)' : 'var(--text-primary)'),
+      })),
+      expectedRx: sel.expectedRx, budgetNote: sel.budgetNote,
+      chain: (sel.chain || []).map(([dir, title, sub]) => ({
+        dir: dir === 'up' ? 'UP' : 'DOWN', title, sub,
+        dirStyle: 'flex:0 0 auto;padding:2px 6px;border-radius:var(--radius-xs);font-size:var(--type-micro-size);font-weight:600;letter-spacing:.3px;background:'
+          + (dir === 'up' ? 'var(--blue-50);color:var(--blue-700)' : 'var(--n-50);color:var(--text-secondary)'),
+      })),
+    } : { fields: [], telemetry: [], chain: [] };
+
+    return {
+      navGroups,
+      sidebarStyle: [
+        'display:flex;flex-direction:column;flex:0 0 auto', `width:${collapsed ? 68 : 248}px`,
+        'background:var(--surface-inverse);border-right:1px solid var(--border-on-dark)',
+        'transition:width var(--dur-slow) var(--ease-standard)',
+      ].join(';'),
+      brandRowStyle: ['display:flex;align-items:center;gap:10px;height:56px;flex:0 0 auto', collapsed ? 'padding:0;justify-content:center' : 'padding:0 14px', 'border-bottom:1px solid var(--border-on-dark)'].join(';'),
+      brandStyle: hiddenStyle,
+      sidebarFooterStyle: (collapsed ? 'display:none;' : 'display:block;') + 'flex:0 0 auto;padding:10px 12px 14px;border-top:1px solid var(--border-on-dark)',
+      toggleCollapse: () => this.setState({ collapsed: !collapsed }),
+      collapseLabel: collapsed ? 'Expand sidebar' : 'Collapse sidebar',
+
+      modeOptions: ['Location', 'Network', 'Logical', 'Coordinates'],
+      mode: this.mode,
+      setMode: m => this.setState({ mode: m }),
+      tools, toolHint,
+      tabOptions: ['Layers', 'Details', 'Trace'],
+      tab,
+      setTab: t => this.setState({ tab: t }),
+      showLayers: tab === 'Layers',
+      showDetails: tab === 'Details',
+      showTrace: tab === 'Trace',
+      hasSelection: !!sel,
+      noSelection: !sel,
+      sel: selVals,
+      layerGroups,
+      layerCountLabel: shown + '/' + total,
+      showAll: () => this.setState({ hidden: {} }),
+      hideAll: () => {
+        const h = {};
+        LAYER_GROUPS.forEach(g => g.items.forEach(([k]) => { h[k] = true; }));
+        this.setState({ hidden: h });
+      },
+      runTrace: () => {
+        const target = sel && sel.traceTarget;
+        if (!target) return;
+        this.setState(s => ({ trace: target, tab: 'Trace', fit: s.fit + 1 }));
+      },
+      hasTrace: !!trace,
+      noTrace: !trace,
+      trace: trace ? {
+        title: trace.title, subtitle: trace.subtitle, distance: trace.distance, splices: trace.splices,
+        hops: trace.hops.map(([title, sub], i) => ({
+          title, sub,
+          railStyle: `position:absolute;left:8px;width:1px;background:var(--border-hairline);top:${i === 0 ? '50%' : '0'};bottom:${i === trace.hops.length - 1 ? '50%' : '0'}`,
+          nodeStyle: `position:relative;width:7px;height:7px;border-radius:var(--radius-full);background:${i === 0 || i === trace.hops.length - 1 ? 'var(--action-primary)' : 'var(--n-400)'};box-shadow:0 0 0 3px var(--surface-card)`,
+        })),
+      } : { hops: [] },
+      fitTrace: () => this.setState(s => ({ fit: s.fit + 1 })),
+      clearTrace: () => this.setState({ trace: null }),
+      openIncident: () => this.setState(s => ({ selected: 'INC-1045', tab: 'Details', follow: s.follow + 1 })),
+      statusLine: (this.state.selected ? this.state.selected + ' selected · ' : '') + 'Bogura Uposhohor · zoom 15 · ' + counts.onu + ' ONUs in view',
+    };
+  }
+}
+
+</script>
+</body>
+</html>

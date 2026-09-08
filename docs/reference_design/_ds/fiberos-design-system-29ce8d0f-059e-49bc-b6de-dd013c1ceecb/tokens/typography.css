@@ -1,0 +1,40 @@
+:root{
+/* Display — Space Grotesk. Negative tracking at every size ≥ 17px. */
+--type-display-lg-size:40px;--type-display-lg-weight:600;--type-display-lg-lh:1.10;--type-display-lg-ls:-0.5px;
+--type-display-md-size:32px;--type-display-md-weight:600;--type-display-md-lh:1.15;--type-display-md-ls:-0.4px;
+--type-heading-lg-size:24px;--type-heading-lg-weight:600;--type-heading-lg-lh:1.25;--type-heading-lg-ls:-0.3px;
+--type-heading-md-size:20px;--type-heading-md-weight:600;--type-heading-md-lh:1.30;--type-heading-md-ls:-0.2px;
+--type-heading-sm-size:17px;--type-heading-sm-weight:500;--type-heading-sm-lh:1.35;--type-heading-sm-ls:-0.15px;
+
+/* Metrics — Space Grotesk, tabular. The KPI voice. */
+--type-metric-xl-size:34px;--type-metric-xl-weight:600;--type-metric-xl-lh:1.05;--type-metric-xl-ls:-0.6px;
+--type-metric-lg-size:24px;--type-metric-lg-weight:600;--type-metric-lg-lh:1.10;--type-metric-lg-ls:-0.4px;
+--type-metric-sm-size:17px;--type-metric-sm-weight:500;--type-metric-sm-lh:1.20;--type-metric-sm-ls:-0.2px;
+
+/* Body / UI — Inter */
+--type-body-lg-size:17px;--type-body-lg-weight:400;--type-body-lg-lh:1.47;--type-body-lg-ls:-0.2px;
+--type-body-size:15px;--type-body-weight:400;--type-body-lh:1.50;--type-body-ls:-0.1px;
+--type-body-strong-size:15px;--type-body-strong-weight:600;--type-body-strong-lh:1.40;--type-body-strong-ls:-0.1px;
+--type-body-sm-size:13px;--type-body-sm-weight:400;--type-body-sm-lh:1.45;--type-body-sm-ls:0;
+--type-label-size:13px;--type-label-weight:500;--type-label-lh:1.20;--type-label-ls:0;
+--type-caption-size:12px;--type-caption-weight:400;--type-caption-lh:1.35;--type-caption-ls:0;
+--type-micro-size:11px;--type-micro-weight:500;--type-micro-lh:1.20;--type-micro-ls:0.2px;
+
+/* Weight ladder — 500 is used, 300 is not. */
+--weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
+}
+
+/* Utility classes — optional; components use the raw tokens. */
+.fos-display-lg{font-family:var(--font-display);font-size:var(--type-display-lg-size);font-weight:var(--type-display-lg-weight);line-height:var(--type-display-lg-lh);letter-spacing:var(--type-display-lg-ls)}
+.fos-display-md{font-family:var(--font-display);font-size:var(--type-display-md-size);font-weight:var(--type-display-md-weight);line-height:var(--type-display-md-lh);letter-spacing:var(--type-display-md-ls)}
+.fos-heading-lg{font-family:var(--font-display);font-size:var(--type-heading-lg-size);font-weight:var(--type-heading-lg-weight);line-height:var(--type-heading-lg-lh);letter-spacing:var(--type-heading-lg-ls)}
+.fos-heading-md{font-family:var(--font-display);font-size:var(--type-heading-md-size);font-weight:var(--type-heading-md-weight);line-height:var(--type-heading-md-lh);letter-spacing:var(--type-heading-md-ls)}
+.fos-heading-sm{font-family:var(--font-display);font-size:var(--type-heading-sm-size);font-weight:var(--type-heading-sm-weight);line-height:var(--type-heading-sm-lh);letter-spacing:var(--type-heading-sm-ls)}
+.fos-metric-xl{font-family:var(--font-display);font-size:var(--type-metric-xl-size);font-weight:var(--type-metric-xl-weight);line-height:var(--type-metric-xl-lh);letter-spacing:var(--type-metric-xl-ls);font-variant-numeric:tabular-nums}
+.fos-metric-lg{font-family:var(--font-display);font-size:var(--type-metric-lg-size);font-weight:var(--type-metric-lg-weight);line-height:var(--type-metric-lg-lh);letter-spacing:var(--type-metric-lg-ls);font-variant-numeric:tabular-nums}
+.fos-body{font-family:var(--font-body);font-size:var(--type-body-size);font-weight:var(--type-body-weight);line-height:var(--type-body-lh);letter-spacing:var(--type-body-ls)}
+.fos-body-sm{font-family:var(--font-body);font-size:var(--type-body-sm-size);line-height:var(--type-body-sm-lh)}
+.fos-label{font-family:var(--font-body);font-size:var(--type-label-size);font-weight:var(--type-label-weight);letter-spacing:var(--type-label-ls)}
+.fos-caption{font-family:var(--font-body);font-size:var(--type-caption-size);line-height:var(--type-caption-lh)}
+/* Addresses, ports, IDs, and every table number. */
+.fos-tabular{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"ss01" 1}
